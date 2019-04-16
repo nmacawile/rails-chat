@@ -1,0 +1,66 @@
+<mat-toolbar>
+  <!-- CHAT_TITLEBAR start -->
+  <mat-toolbar-row fxLayout>
+    <button mat-icon-button [style.margin-right.px]="8">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span>Sample Chat</span>
+    <button mat-icon-button style="margin-left: auto">
+      <mat-icon>group</mat-icon>
+    </button>
+  </mat-toolbar-row>
+</mat-toolbar>
+<!-- CHAT_TITLEBAR end -->
+
+<!-- CHAT_MESSAGES start -->
+<div class="chat-messages">
+  <div fxLayout="column" class="chat-box-group chat-box-group-left" fxLayoutGap="2px" fxLayoutAlign="start start">
+    <mat-card *ngFor="let num of list" class="example-card" [ngStyle]="{'max-width.px': 248}">
+      <mat-card-content>
+        <p>
+          The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan.
+          A small, agile dog that copes very well with mountainous terrain, the Shiba Inu was originally
+          bred for hunting.
+        </p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div fxLayout="column" class="chat-box-group chat-box-group-right" fxLayoutGap="2px" fxLayoutAlign="start end">
+    <mat-card *ngFor="let num of list" class="example-card" [ngStyle]="{'max-width.px': 248}">
+      <mat-card-content>
+        <p>
+          The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan.
+          A small, agile dog that copes very well with mountainous terrain, the Shiba Inu was originally
+          bred for hunting.
+        </p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+<!-- CHAT_MESSAGES end -->
+
+<!-- CHAT_MESSAGE_BOX start -->
+<div style="position: fixed;
+            bottom: 0;
+            z-index: 5;
+            box-sizing: border-box;
+            width: 100%;
+            padding: 32px 16px 16px;
+            background: linear-gradient(transparent, #fff 16px);"
+     class="chat-message-box">
+  <form fxLayout fxLayoutAlign="center center" fxLayoutGap="16px">
+    <mat-form-field style="width: 100%;">
+      <textarea matInput
+            placeholder="Leave a message" 
+            cdkTextareaAutosize
+            cdkAutosizeMinRows="3"
+            cdkAutosizeMaxRows="3"></textarea>
+      <mat-hint align="start">Don't disclose personal info</mat-hint>
+      <mat-hint align="end">{{200}} / 256</mat-hint>
+    </mat-form-field>
+    <button mat-fab>
+      <mat-icon>send</mat-icon>
+    </button>
+  </form>
+</div>
+<!-- CHAT_MESSAGE_BOX end -->

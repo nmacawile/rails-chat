@@ -1,5 +1,43 @@
-<mat-toolbar color="accent">
-  <mat-toolbar-row>
-    <span>Chat</span>
-  </mat-toolbar-row>
-</mat-toolbar>
+<mat-sidenav-container style="height: 100%">
+  <!-- SIDENAV start -->
+  <mat-sidenav #sidenav mode="over"
+               fixedInViewport="true"
+               style="width: 296px;">
+    <mat-toolbar color="primary" 
+                 style="display: grid;
+                        grid-template-rows: repeat(3, 1fr);
+                        background: url('/assets/img/abstract-background-blur-949587.jpg');
+                        background-size: cover;
+                        background-position: center;">
+      <mat-toolbar-row style="grid-row-start: 3;">
+        <div>
+          <div>User</div>
+          <small>user@email.com</small>
+        </div>
+      </mat-toolbar-row>
+    </mat-toolbar>
+    <mat-nav-list id="sidenav-list">
+      <a mat-list-item><mat-icon>visibility</mat-icon>
+        <mat-slide-toggle labelPosition="before" style="width: 100%;" id="availability-toggle">
+          Available
+        </mat-slide-toggle>
+      </a>
+      <a mat-list-item><mat-icon>settings</mat-icon> <span>Settings</span></a>
+      <a mat-list-item><mat-icon>exit_to_app</mat-icon> <span>Sign out</span></a>
+    </mat-nav-list>
+  </mat-sidenav>
+  <!-- SIDENAV end -->
+
+  <!-- MAIN_TOOLBAR start -->
+  <mat-toolbar color="primary">
+    <mat-toolbar-row>
+      <button mat-icon-button [style.margin-right.px]="8" (click)="sidenav.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span>Rails Chat</span>
+    </mat-toolbar-row>
+  </mat-toolbar>
+  <!-- MAIN_TOOLBAR end -->
+  <app-chat></app-chat>
+</mat-sidenav-container>
+

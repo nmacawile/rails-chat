@@ -1,0 +1,38 @@
+$indigo-50: #e8eaf6;
+$indigo-400: #5c6bc0;
+
+.chat-messages {
+  padding: 16px 16px 148px;
+}
+
+.chat-box-group {
+  margin-bottom: 8px;
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+}
+
+.chat-box-group-left mat-card {
+  background-color: $indigo-50;
+  border-top-right-radius: 32px;
+  border-bottom-right-radius: 32px;
+  &:first-of-type {
+    border-top-left-radius: 32px;
+  }
+  &:last-of-type {
+    border-bottom-left-radius: 32px;
+  }
+}
+
+.chat-box-group-right mat-card {
+  background-color: $indigo-400;
+  color: #fff;
+  border-top-left-radius: 32px;
+  border-bottom-left-radius: 32px;
+  &:first-of-type {
+    border-top-right-radius: 32px;
+  }
+  &:last-of-type {
+    border-bottom-right-radius: 32px;
+  }
+}
