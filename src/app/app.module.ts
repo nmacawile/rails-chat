@@ -7,9 +7,10 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { MaterialModule } from './material/material.module';
 import { ChatComponent } from './chat/chat.component';
+import { MessageComponent } from './message/message.component';
 
 @NgModule({
-  declarations: [AppComponent, ChatComponent],
+  declarations: [AppComponent, ChatComponent, MessageComponent,],
   imports: [
     BrowserModule,
     AppRoutingModule,

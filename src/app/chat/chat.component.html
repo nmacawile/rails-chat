@@ -1,40 +1,29 @@
-<mat-toolbar>
+<mat-toolbar style="position: sticky; top: 0; z-index: 500;">
   <!-- CHAT_TITLEBAR start -->
   <mat-toolbar-row fxLayout>
     <button mat-icon-button [style.margin-right.px]="8">
       <mat-icon>arrow_back</mat-icon>
     </button>
     <span>Sample Chat</span>
-    <button mat-icon-button style="margin-left: auto">
-      <mat-icon>group</mat-icon>
-    </button>
+    <div style="margin-left: auto">
+      <button mat-button (click)="addLeft()">
+        L
+      </button>
+      <button mat-button (click)="addRight()">
+        R
+      </button>
+    </div>
   </mat-toolbar-row>
 </mat-toolbar>
 <!-- CHAT_TITLEBAR end -->
 
 <!-- CHAT_MESSAGES start -->
 <div class="chat-messages">
-  <div fxLayout="column" class="chat-box-group chat-box-group-left" fxLayoutGap="2px" fxLayoutAlign="start start">
-    <mat-card *ngFor="let num of list" class="example-card" [ngStyle]="{'max-width.px': 248}">
-      <mat-card-content>
-        <p>
-          The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan.
-          A small, agile dog that copes very well with mountainous terrain, the Shiba Inu was originally
-          bred for hunting.
-        </p>
-      </mat-card-content>
-    </mat-card>
-  </div>
-  <div fxLayout="column" class="chat-box-group chat-box-group-right" fxLayoutGap="2px" fxLayoutAlign="start end">
-    <mat-card *ngFor="let num of list" class="example-card" [ngStyle]="{'max-width.px': 248}">
-      <mat-card-content>
-        <p>
-          The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan.
-          A small, agile dog that copes very well with mountainous terrain, the Shiba Inu was originally
-          bred for hunting.
-        </p>
-      </mat-card-content>
-    </mat-card>
+  <div *ngFor="let group of list; last as isLast"
+        class="chat-box-group chat-box-group-{{group[0] === 1 ? 'left' : 'right'}}">
+    <!-- CHAT_MESSAGE start -->
+    <app-message *ngFor="let num of group" [scrollIntoView]="scrolledToBottom"></app-message>
+    <!-- CHAT_MESSAGE end -->
   </div>
 </div>
 <!-- CHAT_MESSAGES end -->
