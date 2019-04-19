@@ -4,8 +4,8 @@ import {
   AfterViewInit,
   ViewChild,
   ElementRef,
-  Input,
 } from '@angular/core';
+import { ScrollPositionService } from '../scroll-position.service';
 
 @Component({
   selector: 'app-message',
@@ -16,14 +16,12 @@ export class MessageComponent implements OnInit, AfterViewInit {
   @ViewChild('messageCard', { read: ElementRef })
   messageCard: ElementRef;
 
-  @Input('scrollIntoView')
-  scrollIntoView: boolean;
-  constructor() {}
+  constructor(private scrollPositionService: ScrollPositionService) {}
 
   ngOnInit() {}
 
   ngAfterViewInit() {
-    if (this.scrollIntoView)
+    if (this.scrollPositionService.scrolledToBottom)
       this.messageCard.nativeElement.scrollIntoView({ behavior: 'smooth' });
   }
 }

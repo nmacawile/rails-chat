@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { ScrollDispatchModule } from '@angular/cdk/scrolling';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -16,6 +17,7 @@ import { MessageComponent } from './message/message.component';
     AppRoutingModule,
     BrowserAnimationsModule,
     MaterialModule,
+    ScrollDispatchModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

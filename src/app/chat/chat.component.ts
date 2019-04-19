@@ -1,15 +1,4 @@
-import {
-  Component,
-  OnInit,
-  ViewEncapsulation,
-  AfterViewInit,
-  OnDestroy,
-
-} from '@angular/core';
-import { fromEvent } from 'rxjs';
-import { throttleTime, debounceTime } from 'rxjs/operators';
-import { Subscription } from 'rxjs';
-import { scrollPositionFromBottom } from '../helper';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 
 @Component({
   selector: 'app-chat',
@@ -17,32 +6,12 @@ import { scrollPositionFromBottom } from '../helper';
   styleUrls: ['./chat.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ChatComponent implements OnInit {
   list: Array<Array<number>> = [];
-
-  scrolledToBottom: boolean = true;
-  scrollSubscription: Subscription;
 
   constructor() {}
 
   ngOnInit() {}
-
-  ngAfterViewInit() {
-    const scrollableElement = document.querySelector('.mat-drawer-content');
-    const scrollObservable = fromEvent(scrollableElement, 'scroll').pipe(
-      debounceTime(100),
-    );
-
-    this.scrollSubscription = scrollObservable.subscribe(() => {
-      const positionFromBottom = scrollPositionFromBottom(scrollableElement);
-      this.scrolledToBottom = positionFromBottom <= 100;
-    });
-  }
-
-  ngOnDestroy() {
-    this.scrollSubscription.unsubscribe();
-  }
-
 
   addLeft() {
     if (this.list.length === 0 || this.last_element(this.list) !== 1)
