@@ -4,22 +4,30 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
-/* width */
-::-webkit-scrollbar {
-  width: 8px;
+.topbar-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 500;
 }
 
-/* Track */
-::-webkit-scrollbar-track {
-  background: rgba(0,0,0,.12);
-}
- 
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: rgba(0,0,0,.38);
-}
+@media (min-width: 960px) {
+  /* width */
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
 
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(0,0,0,.53); 
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: rgba(0,0,0,.12);
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,.38);
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(0,0,0,.53); 
+  }
 }
