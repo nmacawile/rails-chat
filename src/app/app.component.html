@@ -38,6 +38,8 @@
     </mat-toolbar-row>
   </mat-toolbar>
   <!-- MAIN_TOOLBAR end -->
-  <router-outlet></router-outlet>
+  <div [@slideIn]="o && o.activatedRouteData && o.activatedRouteData['type']">
+    <router-outlet #o="outlet"></router-outlet>
+  </div>
 </mat-sidenav-container>
 

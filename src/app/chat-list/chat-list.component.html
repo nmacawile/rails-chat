@@ -1,6 +1,8 @@
-<h2>Chats</h2>
-<ul>
-  <li *ngFor="let chat of chats">
-    <a routerLink="/chat/{{chat.id}}">Chat # {{chat.id}}</a>
-  </li>
-</ul>
+<div style="padding: 1rem;">
+  <h2>Chats</h2>
+  <ul>
+    <li *ngFor="let chat of chats">
+      <a routerLink="/chat/{{chat.id}}">Chat # {{chat.id}}</a>
+    </li>
+  </ul>
+</div>

@@ -7,10 +7,12 @@ const routes: Routes = [
   {
     path: '',
     component: ChatListComponent,
+    data: { type: 'ChatList' },
   },
   {
     path: 'chat/:id',
-    component: ChatComponent
+    component: ChatComponent,
+    data: { type: 'Chat' },
   }
 ];
 
