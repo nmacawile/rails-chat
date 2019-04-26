@@ -1,55 +1,57 @@
-<mat-toolbar class="topbar-sticky">
-  <!-- CHAT_TITLEBAR start -->
-  <mat-toolbar-row fxLayout>
-    <button mat-icon-button [style.margin-right.px]="8">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-    <span>Sample Chat</span>
-    <div style="margin-left: auto">
-      <button mat-button (click)="addLeft()">
-        L
+<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 1000; overflow: auto;">
+  <mat-toolbar class="topbar-sticky">
+    <!-- CHAT_TITLEBAR start -->
+    <mat-toolbar-row fxLayout>
+      <button mat-icon-button [style.margin-right.px]="8" routerLink="">
+        <mat-icon>arrow_back</mat-icon>
       </button>
-      <button mat-button (click)="addRight()">
-        R
-      </button>
+      <span>Sample Chat</span>
+      <div style="margin-left: auto">
+        <button mat-button (click)="addLeft()">
+          L
+        </button>
+        <button mat-button (click)="addRight()">
+          R
+        </button>
+      </div>
+    </mat-toolbar-row>
+  </mat-toolbar>
+  <!-- CHAT_TITLEBAR end -->
+
+  <!-- CHAT_MESSAGES start -->
+  <div class="chat-messages">
+    <div *ngFor="let group of list; last as isLast"
+          class="chat-box-group chat-box-group-{{group[0] === 1 ? 'left' : 'right'}}">
+      <!-- CHAT_MESSAGE start -->
+      <app-message *ngFor="let num of group"></app-message>
+      <!-- CHAT_MESSAGE end -->
     </div>
-  </mat-toolbar-row>
-</mat-toolbar>
-<!-- CHAT_TITLEBAR end -->
-
-<!-- CHAT_MESSAGES start -->
-<div class="chat-messages">
-  <div *ngFor="let group of list; last as isLast"
-        class="chat-box-group chat-box-group-{{group[0] === 1 ? 'left' : 'right'}}">
-    <!-- CHAT_MESSAGE start -->
-    <app-message *ngFor="let num of group"></app-message>
-    <!-- CHAT_MESSAGE end -->
   </div>
-</div>
-<!-- CHAT_MESSAGES end -->
+  <!-- CHAT_MESSAGES end -->
 
-<!-- CHAT_MESSAGE_BOX start -->
-<div style="position: fixed;
-            bottom: 0;
-            z-index: 5;
-            box-sizing: border-box;
-            width: 100%;
-            padding: 32px 16px 16px;
-            background: linear-gradient(transparent, #fff 16px);"
-     class="chat-message-box">
-  <form fxLayout fxLayoutAlign="center center" fxLayoutGap="16px">
-    <mat-form-field style="width: 100%;">
-      <textarea matInput
-            placeholder="Leave a message" 
-            cdkTextareaAutosize
-            cdkAutosizeMinRows="3"
-            cdkAutosizeMaxRows="3"></textarea>
-      <mat-hint align="start">Don't disclose personal info</mat-hint>
-      <mat-hint align="end">{{200}} / 256</mat-hint>
-    </mat-form-field>
-    <button mat-fab>
-      <mat-icon>send</mat-icon>
-    </button>
-  </form>
+  <!-- CHAT_MESSAGE_BOX start -->
+  <div style="position: fixed;
+              bottom: 0;
+              z-index: 5;
+              box-sizing: border-box;
+              width: 100%;
+              padding: 32px 16px 16px;
+              background: linear-gradient(transparent, #fff 16px);"
+       class="chat-message-box">
+    <form fxLayout fxLayoutAlign="center center" fxLayoutGap="16px">
+      <mat-form-field style="width: 100%;">
+        <textarea matInput
+              placeholder="Leave a message" 
+              cdkTextareaAutosize
+              cdkAutosizeMinRows="3"
+              cdkAutosizeMaxRows="3"></textarea>
+        <mat-hint align="start">Don't disclose personal info</mat-hint>
+        <mat-hint align="end">{{200}} / 256</mat-hint>
+      </mat-form-field>
+      <button mat-fab>
+        <mat-icon>send</mat-icon>
+      </button>
+    </form>
+  </div>
+  <!-- CHAT_MESSAGE_BOX end -->
 </div>
-<!-- CHAT_MESSAGE_BOX end -->

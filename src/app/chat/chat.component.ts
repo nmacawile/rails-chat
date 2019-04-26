@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { ActivatedRoute,ParamMap } from '@angular/router';
 
 @Component({
   selector: 'app-chat',
@@ -9,9 +10,12 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 export class ChatComponent implements OnInit {
   list: Array<Array<number>> = [];
 
-  constructor() {}
+  constructor(private route: ActivatedRoute) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.route.paramMap.subscribe((params: ParamMap) => 
+      console.log(params.get('id')))
+  }
 
   addLeft() {
     if (this.list.length === 0 || this.last_element(this.list) !== 1)
