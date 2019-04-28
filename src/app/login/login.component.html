@@ -3,7 +3,7 @@
     Login
   </h1>
 
-  <form [formGroup]="loginForm" fxLayout="column">
+  <form [formGroup]="loginForm" fxLayout="column" (ngSubmit)="logIn()">
     <mat-form-field>
       <input matInput type="email" placeholder="Email" formControlName="email">
     </mat-form-field>
