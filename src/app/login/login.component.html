@@ -1,0 +1,15 @@
+<div style="padding: 16px">
+  <h1 class="mat-h1">
+    Login
+  </h1>
+
+  <form [formGroup]="loginForm" fxLayout="column">
+    <mat-form-field>
+      <input matInput type="email" placeholder="Email" formControlName="email">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="password" placeholder="Password" formControlName="password">
+    </mat-form-field>
+    <button mat-raised-button color="primary">LOG IN</button>
+  </form>
+</div>

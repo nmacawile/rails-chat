@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { ChatComponent } from './chat/chat.component';
 import { ChatListComponent } from './chat-list/chat-list.component';
+import { LoginComponent } from './login/login.component';
 
 const routes: Routes = [
   {
@@ -13,7 +14,12 @@ const routes: Routes = [
     path: 'chat/:id',
     component: ChatComponent,
     data: { type: 'Chat' },
-  }
+  },
+  {
+    path: 'login',
+    component: LoginComponent,
+    data: { type: 'Login' },
+  },
 ];
 
 @NgModule({
