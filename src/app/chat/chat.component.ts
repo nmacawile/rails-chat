@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { ActivatedRoute,ParamMap } from '@angular/router';
+import { ActivatedRoute, ParamMap } from '@angular/router';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-chat',
@@ -9,12 +10,16 @@ import { ActivatedRoute,ParamMap } from '@angular/router';
 })
 export class ChatComponent implements OnInit {
   list: Array<Array<number>> = [];
+  chatMessageForm: FormGroup;
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(private route: ActivatedRoute, private fb: FormBuilder) {}
 
   ngOnInit() {
-    this.route.paramMap.subscribe((params: ParamMap) => 
-      console.log(params.get('id')))
+    this.route.paramMap.subscribe((params: ParamMap) =>
+      console.log(params.get('id')),
+    );
+
+    this.chatMessageForm = this.fb.group({ message: '' });
   }
 
   addLeft() {

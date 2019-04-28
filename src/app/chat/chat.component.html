@@ -45,9 +45,10 @@
               padding: 32px 16px 16px;
               background: linear-gradient(transparent, #fff 16px);"
        class="chat-message-box">
-    <form fxLayout fxLayoutAlign="center center" fxLayoutGap="16px">
+    <form fxLayout fxLayoutAlign="center center" fxLayoutGap="16px" [formGroup]="chatMessageForm">
       <mat-form-field style="width: 100%;">
         <textarea matInput
+              formControlName="message"
               placeholder="Leave a message" 
               cdkTextareaAutosize
               cdkAutosizeMinRows="3"
