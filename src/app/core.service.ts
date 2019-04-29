@@ -13,6 +13,6 @@ export class CoreService {
   logIn(loginInfo: { email: string; password: string }) {
     return this.http
       .post(`https://${baseUrl}/auth/login`, loginInfo)
-      .pipe(tap(data => tokenSetter(data['auth_token'])));
+      .pipe(tap(tokenSetter));
   }
 }
