@@ -18,13 +18,8 @@ export class LoginComponent implements OnInit {
   }
 
   logIn() {
-    this.coreService.logIn(this.loginForm.value).subscribe(
-      data => {
-        console.log(`Logged in as ${data['user']['name']}.`);
-      },
-      data => {
-        console.log(data['error']['message']);
-      }
-    );
+    this.coreService.logIn(this.loginForm.value).subscribe(data => {
+      console.log(`Logged in as ${data['user']['name']}.`);
+    });
   }
 }

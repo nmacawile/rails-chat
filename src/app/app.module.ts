@@ -6,7 +6,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtModule } from '@auth0/angular-jwt';
 
 import { MaterialModule } from './material/material.module';
@@ -17,6 +17,7 @@ import { LoginComponent } from './login/login.component';
 
 import { tokenGetter } from './token-store';
 import { baseUrl } from '../environments/base-url';
+import { HttpErrorInterceptor } from './http-error.interceptor';
 
 @NgModule({
   declarations: [
@@ -38,10 +39,16 @@ import { baseUrl } from '../environments/base-url';
       config: {
         tokenGetter: tokenGetter,
         whitelistedDomains: [baseUrl],
-      }
-    })
+      },
+    }),
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpErrorInterceptor,
+      multi: true,
+    },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
