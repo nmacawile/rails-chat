@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { CoreService } from '../core.service';
 import { tokenSetter } from '../token-store';
 import { finalize } from 'rxjs/operators';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -12,14 +13,21 @@ import { finalize } from 'rxjs/operators';
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   unlocked = true;
+  returnUrl: string;
 
-  constructor(private fb: FormBuilder, private coreService: CoreService) {}
+  constructor(
+    private fb: FormBuilder,
+    private coreService: CoreService,
+    private route: ActivatedRoute,
+    private router: Router,
+  ) {}
 
   ngOnInit() {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
     });
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   }
 
   logIn() {
@@ -29,7 +37,7 @@ export class LoginComponent implements OnInit {
         .logIn(this.loginForm.value)
         .pipe(finalize(() => (this.unlocked = true)))
         .subscribe(data =>
-          console.log(`Logged in as ${data['user']['name']}.`),
+          this.router.navigate([this.returnUrl])
         );
     }
   }

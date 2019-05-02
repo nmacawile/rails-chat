@@ -11,8 +11,8 @@ export class CoreService {
   constructor(private http: HttpClient) {}
 
   logIn(loginInfo: { email: string; password: string }) {
-    return this.http
-      .post(`https://${baseUrl}/auth/login`, loginInfo)
-      .pipe(tap(tokenSetter));
+    return this.http.post(`https://${baseUrl}/auth/login`, loginInfo).pipe(
+      tap(tokenSetter),
+    );
   }
 }
