@@ -1,5 +1,7 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { routeAnimation } from './animations';
+import { CoreService } from './core.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -8,4 +10,11 @@ import { routeAnimation } from './animations';
   animations: [routeAnimation],
   encapsulation: ViewEncapsulation.None,
 })
-export class AppComponent {}
+export class AppComponent {
+  constructor(private core: CoreService, private router: Router) {}
+
+  logOut() {
+    this.core.logOut();
+    this.router.navigate(['/login']);
+  }
+}
