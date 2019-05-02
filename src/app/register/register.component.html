@@ -1,0 +1,38 @@
+<div style="padding: 16px">
+  <h1 class="mat-h1">
+    Register
+  </h1>
+
+  <form [formGroup]="registerForm" fxLayout="column" fxLayoutGap="16px" (ngSubmit)="register()">
+    <mat-form-field>
+      <input matInput type="email" placeholder="Email" formControlName="email">
+      <mat-error *ngIf="formError('email', 'email')">Not a valid email format.</mat-error>
+      <mat-error *ngIf="formError('email', 'required')">Email is required.</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="password" placeholder="Password" formControlName="password">
+      <mat-error *ngIf="formError('password', 'minlength')">Password is too short - minimum length 6 characters.</mat-error>
+      <mat-error *ngIf="formError('password', 'required')">Password confirmation is required.</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="password" placeholder="Password Confirmation" formControlName="password_confirmation">
+      <mat-error *ngIf="formError('password_confirmation', 'match')">Password confirmation does not match.</mat-error>
+      <mat-error *ngIf="formError('password_confirmation', 'required')">Password confirmation is required.</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="text" placeholder="First Name" formControlName="first_name">
+      <mat-error>First name is required.</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="text" placeholder="Last Name" formControlName="last_name">
+      <mat-error>Last name is required.</mat-error>
+    </mat-form-field>
+    <span class="mat-body-1">
+      Already have an account? Log in
+      <a mat-button color="accent" routerLink="/login">HERE</a>.
+    </span>
+    <button mat-raised-button color="primary" [disabled]="!unlocked">
+      {{unlocked ? 'REGISTER' : 'PLEASE WAIT...'}}
+    </button>
+  </form>
+</div>

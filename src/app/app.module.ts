@@ -18,6 +18,7 @@ import { LoginComponent } from './login/login.component';
 import { tokenGetter } from './token-store';
 import { baseUrl } from '../environments/base-url';
 import { HttpErrorInterceptor } from './http-error.interceptor';
+import { RegisterComponent } from './register/register.component';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { HttpErrorInterceptor } from './http-error.interceptor';
     MessageComponent,
     ChatListComponent,
     LoginComponent,
+    RegisterComponent,
   ],
   imports: [
     BrowserModule,

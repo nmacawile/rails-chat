@@ -16,6 +16,18 @@ export class CoreService {
       .pipe(tap(tokenSetter));
   }
 
+  register(registerInfo: {
+    email: string;
+    password: string;
+    password_confirmation: string;
+    first_name: string;
+    last_name: string;
+  }) {
+    return this.http
+      .post(`https://${baseUrl}/signup`, registerInfo)
+      .pipe(tap(tokenSetter));
+  }
+
   logOut() {
     localStorage.removeItem('user');
     localStorage.removeItem('auth_token');

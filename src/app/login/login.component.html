@@ -13,6 +13,10 @@
       <input matInput type="password" placeholder="Password" formControlName="password">
       <mat-error>Password is required.</mat-error>
     </mat-form-field>
+    <span class="mat-body-1">
+      No account yet? Sign up
+      <a mat-button color="accent" routerLink="/register">HERE</a>.
+    </span>
     <button mat-raised-button color="primary" [disabled]="!unlocked">
       {{unlocked ? 'LOG IN' : 'PLEASE WAIT...'}}
     </button>
