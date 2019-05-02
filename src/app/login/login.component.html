@@ -3,13 +3,18 @@
     Login
   </h1>
 
-  <form [formGroup]="loginForm" fxLayout="column" (ngSubmit)="logIn()">
+  <form [formGroup]="loginForm" fxLayout="column" fxLayoutGap="16px" (ngSubmit)="logIn()">
     <mat-form-field>
       <input matInput type="email" placeholder="Email" formControlName="email">
+      <mat-error *ngIf="formError('email', 'email')">Not a valid email format.</mat-error>
+      <mat-error *ngIf="formError('email', 'required')">Email is required.</mat-error>
     </mat-form-field>
     <mat-form-field>
       <input matInput type="password" placeholder="Password" formControlName="password">
+      <mat-error>Password is required.</mat-error>
     </mat-form-field>
-    <button mat-raised-button color="primary">LOG IN</button>
+    <button mat-raised-button color="primary" [disabled]="!unlocked">
+      {{unlocked ? 'LOG IN' : 'PLEASE WAIT...'}}
+    </button>
   </form>
 </div>
