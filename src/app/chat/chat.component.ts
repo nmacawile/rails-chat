@@ -1,6 +1,11 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  AbstractControl,
+} from '@angular/forms';
 import { CoreService } from '../core.service';
 import { MessageService } from '../message.service';
 import { ChatService } from '../chat.service';
@@ -46,11 +51,21 @@ export class ChatComponent implements OnInit, OnDestroy {
         this.clusterMessages(messages);
       });
 
-    this.chatMessageForm = this.fb.group({ message: '' });
+    this.chatMessageForm = this.fb.group({
+      content: ['', Validators.required],
+    });
   }
 
   ngOnDestroy() {
     this.routeSub.unsubscribe();
+  }
+
+  sendMessage() {
+    if (this.chatMessageForm.valid && this.chat) {
+      this.messageService
+        .sendMessage(this.chat.id, this.chatMessageForm.value)
+        .subscribe();
+    }
   }
 
   private clusterMessages(messages) {

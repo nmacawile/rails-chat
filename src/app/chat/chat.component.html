@@ -42,14 +42,20 @@
               padding: 32px 16px 16px;
               background: linear-gradient(transparent, #fff 16px);"
        class="chat-message-box">
-    <form fxLayout fxLayoutAlign="center center" fxLayoutGap="16px" [formGroup]="chatMessageForm">
+    <form #messageForm
+          fxLayout
+          fxLayoutAlign="center center"
+          fxLayoutGap="16px"
+          [formGroup]="chatMessageForm"
+          (ngSubmit)="sendMessage(); messageForm.reset()">
       <mat-form-field style="width: 100%;">
         <textarea matInput
-              formControlName="message"
+              formControlName="content"
               placeholder="Leave a message" 
               cdkTextareaAutosize
               cdkAutosizeMinRows="3"
               cdkAutosizeMaxRows="3"></textarea>
+        <mat-error>Message is empty.</mat-error>
         <mat-hint align="start">Don't disclose personal info</mat-hint>
         <mat-hint align="end">{{200}} / 256</mat-hint>
       </mat-form-field>

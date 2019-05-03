@@ -16,4 +16,11 @@ export class MessageService {
       .get<Message[]>(`https://${baseUrl}/chats/${chatId}/messages`)
       .pipe(map((messages: Message[]) => messages.reverse()));
   }
+
+  sendMessage(chatId: number, message: { content: string }) {
+    return this.http.post(
+      `https://${baseUrl}/chats/${chatId}/messages`,
+      message,
+    );
+  }
 }
