@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-
-interface Chat {
-  id: number,
-}
+import { ChatService } from '../chat.service';
+import { Chat } from '../chat';
 
 @Component({
   selector: 'app-chat-list',
@@ -10,14 +8,11 @@ interface Chat {
   styleUrls: ['./chat-list.component.scss'],
 })
 export class ChatListComponent implements OnInit {
-  chats: Chat[] = [];
+  chats: Chat[];
 
-  constructor() {}
+  constructor(private chatService: ChatService) {}
 
   ngOnInit() {
-    for (var i = 0; i < 10; i++) {
-      const chat: Chat = { id: i };
-      this.chats.push(chat);
-    }
+    this.chatService.getChats().subscribe(chats => (this.chats = chats));
   }
 }

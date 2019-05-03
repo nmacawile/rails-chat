@@ -1,8 +1,8 @@
 <mat-nav-list [style.padding]="'8px 16px'">
   <a mat-list-item *ngFor="let chat of chats" routerLink="/chat/{{chat.id}}">
-     <h4 matLine class="mat-h4">Chat #{{chat.id}}</h4>
+     <h4 matLine class="mat-h4">{{chat.user.name}}</h4>
      <p matLine [style.color]="'rgba(0,0,0,.54)'">
-       <span class="mat-body-2" [style.paddingRight.px]="4">User</span><span class="mat-body-1">Latest message</span>
+       <span class="mat-body-2" [style.paddingRight.px]="4">{{chat.latest_message.user.name}}</span><span class="mat-body-1">{{chat.latest_message.content}}</span>
      </p>
   </a>
 </mat-nav-list>
