@@ -19,6 +19,7 @@ import { tokenGetter } from './token-store';
 import { baseUrl } from '../environments/base-url';
 import { HttpErrorInterceptor } from './http-error.interceptor';
 import { RegisterComponent } from './register/register.component';
+import { AttachHeaderInterceptor } from './attach-header.inteceptor';
 
 @NgModule({
   declarations: [
@@ -48,6 +49,11 @@ import { RegisterComponent } from './register/register.component';
     {
       provide: HTTP_INTERCEPTORS,
       useClass: HttpErrorInterceptor,
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AttachHeaderInterceptor,
       multi: true,
     },
   ],
