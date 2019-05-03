@@ -12,25 +12,22 @@
       <button mat-icon-button [style.margin-right.px]="8" routerLink="">
         <mat-icon>arrow_back</mat-icon>
       </button>
-      <span>Sample Chat</span>
-      <div style="margin-left: auto">
-        <button mat-button (click)="addLeft()">
-          L
+      <span>{{chat?.user.name}}</span>
+      <!-- <div style="margin-left: auto">
+        <button mat-button>
+          Test
         </button>
-        <button mat-button (click)="addRight()">
-          R
-        </button>
-      </div>
+      </div> -->
     </mat-toolbar-row>
   </mat-toolbar>
   <!-- CHAT_TITLEBAR end -->
 
   <!-- CHAT_MESSAGES start -->
   <div class="chat-messages">
-    <div *ngFor="let group of list; last as isLast"
-          class="chat-box-group chat-box-group-{{group[0] === 1 ? 'left' : 'right'}}">
+    <div *ngFor="let group of messages; last as isLast"
+          class="chat-box-group chat-box-group-{{group[0].user.id !== userId ? 'left' : 'right'}}">
       <!-- CHAT_MESSAGE start -->
-      <app-message *ngFor="let num of group"></app-message>
+      <app-message *ngFor="let message of group" [message]="message"></app-message>
       <!-- CHAT_MESSAGE end -->
     </div>
   </div>

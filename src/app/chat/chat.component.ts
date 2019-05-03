@@ -1,6 +1,13 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { CoreService } from '../core.service';
+import { MessageService } from '../message.service';
+import { ChatService } from '../chat.service';
+import { Chat } from '../chat';
+import { Message } from '../message';
+import { switchMap } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-chat',
@@ -8,37 +15,74 @@ import { FormBuilder, FormGroup } from '@angular/forms';
   styleUrls: ['./chat.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class ChatComponent implements OnInit {
-  list: Array<Array<number>> = [];
+export class ChatComponent implements OnInit, OnDestroy {
+  chat: Chat;
+  messages: Array<Array<Message>> = [];
   chatMessageForm: FormGroup;
+  userId: number;
+  routeSub: Subscription;
 
-  constructor(private route: ActivatedRoute, private fb: FormBuilder) {}
+  constructor(
+    private route: ActivatedRoute,
+    private fb: FormBuilder,
+    private coreService: CoreService,
+    private chatService: ChatService,
+    private messageService: MessageService,
+  ) {}
 
   ngOnInit() {
-    this.route.paramMap.subscribe((params: ParamMap) =>
-      console.log(params.get('id')),
-    );
+    this.userId = this.coreService.currentUser.id;
+    this.routeSub = this.route.paramMap
+      .pipe(
+        switchMap((params: ParamMap) =>
+          this.chatService.getChat(+params.get('id')),
+        ),
+        switchMap((chat: Chat) => {
+          this.chat = chat;
+          return this.messageService.getMessages(chat.id);
+        }),
+      )
+      .subscribe(messages => {
+        this.clusterMessages(messages);
+      });
 
     this.chatMessageForm = this.fb.group({ message: '' });
   }
 
-  addLeft() {
-    if (this.list.length === 0 || this.last_element(this.list) !== 1)
-      this.list.push([1]);
-    else this.last(this.list).push(1);
+  ngOnDestroy() {
+    this.routeSub.unsubscribe();
   }
 
-  addRight() {
-    if (this.list.length === 0 || this.last_element(this.list) !== 2)
-      this.list.push([2]);
-    else this.last(this.list).push(2);
+  private clusterMessages(messages) {
+    messages.forEach((message: Message) => {
+      if (message.user.id === this.userId) this.addToSent(message);
+      else this.addToReceived(message);
+    });
   }
 
-  last(array: Array<any>) {
+  private addToReceived(message: Message) {
+    if (
+      this.messages.length === 0 ||
+      this.last_element(this.messages).user.id === this.userId
+    )
+      this.messages.push([message]);
+    else this.last(this.messages).push(message);
+  }
+
+  private addToSent(message: Message) {
+    if (
+      this.messages.length === 0 ||
+      this.last_element(this.messages).user.id !== this.userId
+    )
+      this.messages.push([message]);
+    else this.last(this.messages).push(message);
+  }
+
+  private last(array: Array<any>) {
     return array[array.length - 1];
   }
 
-  last_element(array: Array<Array<any>>) {
+  private last_element(array: Array<Array<any>>) {
     return this.last(this.last(array));
   }
 }

@@ -13,4 +13,8 @@ export class ChatService {
   getChats(): Observable<Chat[]> {
     return this.http.get<Chat[]>(`https://${baseUrl}/chats/`);
   }
+
+  getChat(chatId: number): Observable<Chat> {
+    return this.http.get<Chat>(`https://${baseUrl}/chats/${chatId}`);
+  }
 }
