@@ -26,6 +26,6 @@ export class MessageComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     if (this.scrollPositionService.scrolledToBottom)
-      this.messageCard.nativeElement.scrollIntoView({ behavior: 'smooth' });
+      this.messageCard.nativeElement.scrollIntoView();
   }
 }
