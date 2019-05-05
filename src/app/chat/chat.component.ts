@@ -11,8 +11,12 @@ import { MessageService } from '../message.service';
 import { ChatService } from '../chat.service';
 import { Chat } from '../chat';
 import { Message } from '../message';
-import { switchMap } from 'rxjs/operators';
-import { Subscription } from 'rxjs';
+import { switchMap, shareReplay } from 'rxjs/operators';
+import { Subscription, Observable, of } from 'rxjs';
+import { ActionCableService, Channel } from 'angular2-actioncable';
+import { baseUrl } from '../../environments/base-url';
+import { tokenGetter } from '../token-store';
+import { cluster, addToCluster } from '../cluster-array';
 
 @Component({
   selector: 'app-chat',
@@ -25,7 +29,13 @@ export class ChatComponent implements OnInit, OnDestroy {
   messages: Array<Array<Message>> = [];
   chatMessageForm: FormGroup;
   userId: number;
+  routeObs: Observable<any>;
   routeSub: Subscription;
+  channelSub: Subscription;
+  messagesSub: Subscription;
+  chatSub: Subscription;
+  channel: Channel;
+  clusterFunction: Function;
 
   constructor(
     private route: ActivatedRoute,
@@ -33,22 +43,47 @@ export class ChatComponent implements OnInit, OnDestroy {
     private coreService: CoreService,
     private chatService: ChatService,
     private messageService: MessageService,
+    private cableService: ActionCableService,
   ) {}
 
   ngOnInit() {
     this.userId = this.coreService.currentUser.id;
-    this.routeSub = this.route.paramMap
+
+    this.routeObs = this.route.paramMap.pipe(
+      switchMap((params: ParamMap) => {
+        return of(+params.get('id'));
+      }),
+      shareReplay(),
+    );
+
+    this.chatSub = this.routeObs
+      .pipe(switchMap(chatId => this.chatService.getChat(chatId)))
+      .subscribe(chat => (this.chat = chat));
+
+    this.clusterFunction = (message: Message) =>
+      message.user.id === this.userId;
+
+    this.messagesSub = this.routeObs
+      .pipe(switchMap(chatId => this.messageService.getMessages(chatId)))
+      .subscribe(messages => {
+        this.messages = cluster(messages, this.clusterFunction);
+      });
+
+    this.channelSub = this.routeObs
       .pipe(
-        switchMap((params: ParamMap) =>
-          this.chatService.getChat(+params.get('id')),
-        ),
-        switchMap((chat: Chat) => {
-          this.chat = chat;
-          return this.messageService.getMessages(chat.id);
+        switchMap(chatId => {
+          const cable = this.cableService.cable(`ws://${baseUrl}/cable`, {
+            Authorization: tokenGetter(),
+          });
+          this.channel = cable.channel('ChatChannel', { chat_id: chatId });
+          return this.channel.received();
         }),
       )
-      .subscribe(messages => {
-        this.clusterMessages(messages);
+      .subscribe(messageString => {
+        const message: Message = JSON.parse(messageString);
+        this.clusterFunction(message)
+          ? this.addToSent(message)
+          : this.addToReceived(message);
       });
 
     this.chatMessageForm = this.fb.group({
@@ -57,7 +92,10 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.routeSub.unsubscribe();
+    this.chatSub.unsubscribe();
+    this.messagesSub.unsubscribe();
+    this.channel.unsubscribe();
+    this.channelSub.unsubscribe();
   }
 
   sendMessage() {
@@ -68,36 +106,15 @@ export class ChatComponent implements OnInit, OnDestroy {
     }
   }
 
-  private clusterMessages(messages) {
-    messages.forEach((message: Message) => {
-      if (message.user.id === this.userId) this.addToSent(message);
-      else this.addToReceived(message);
+  private addToReceived(message: Message) {
+    addToCluster(this.messages, message, prev => {
+      return prev.user.id === this.userId;
     });
   }
 
-  private addToReceived(message: Message) {
-    if (
-      this.messages.length === 0 ||
-      this.last_element(this.messages).user.id === this.userId
-    )
-      this.messages.push([message]);
-    else this.last(this.messages).push(message);
-  }
-
   private addToSent(message: Message) {
-    if (
-      this.messages.length === 0 ||
-      this.last_element(this.messages).user.id !== this.userId
-    )
-      this.messages.push([message]);
-    else this.last(this.messages).push(message);
-  }
-
-  private last(array: Array<any>) {
-    return array[array.length - 1];
-  }
-
-  private last_element(array: Array<Array<any>>) {
-    return this.last(this.last(array));
+    addToCluster(this.messages, message, prev => {
+      return prev.user.id !== this.userId;
+    });
   }
 }
