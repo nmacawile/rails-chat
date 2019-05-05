@@ -47,6 +47,7 @@
           fxLayoutAlign="center center"
           fxLayoutGap="16px"
           [formGroup]="chatMessageForm"
+          (keydown.enter)="sendMessage(); messageForm.reset()"
           (ngSubmit)="sendMessage(); messageForm.reset()">
       <mat-form-field style="width: 100%;">
         <textarea matInput
@@ -54,7 +55,8 @@
               placeholder="Leave a message" 
               cdkTextareaAutosize
               cdkAutosizeMinRows="3"
-              cdkAutosizeMaxRows="3"></textarea>
+              cdkAutosizeMaxRows="3"
+              (keydown.enter)="$event.preventDefault();"></textarea>
         <mat-error>Message is empty.</mat-error>
         <mat-hint align="start">Don't disclose personal info</mat-hint>
         <mat-hint align="end">{{200}} / 256</mat-hint>

@@ -1,11 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  AbstractControl,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, AbstractControl } from '@angular/forms';
 import { CoreService } from '../core.service';
 import { MessageService } from '../message.service';
 import { ChatService } from '../chat.service';
@@ -87,7 +82,7 @@ export class ChatComponent implements OnInit, OnDestroy {
       });
 
     this.chatMessageForm = this.fb.group({
-      content: ['', Validators.required],
+      content: '',
     });
   }
 
@@ -99,9 +94,11 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   sendMessage() {
-    if (this.chatMessageForm.valid && this.chat) {
+    const content = this.chatMessageForm.get('content').value;
+    const trimmed = content && content.trim();
+    if (trimmed && this.chat) {
       this.messageService
-        .sendMessage(this.chat.id, this.chatMessageForm.value)
+        .sendMessage(this.chat.id, { content: trimmed })
         .subscribe();
     }
   }
