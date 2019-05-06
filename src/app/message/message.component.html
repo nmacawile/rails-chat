@@ -1,7 +1,6 @@
 <mat-card class="message-card" [ngStyle]="{'max-width.px': 248}" #messageCard>
   <mat-card-content>
-    <p>
-      {{message.content}}
-    </p>
+    <p style="white-space: pre-wrap;
+              word-break: break-word;">{{message.content}}</p>
   </mat-card-content>
 </mat-card>
