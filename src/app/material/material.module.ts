@@ -10,6 +10,7 @@ import {
   MatListModule,
   MatSlideToggleModule,
   MatSnackBarModule,
+  MatTabsModule,
 } from '@angular/material';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
@@ -27,6 +28,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     MatListModule,
     MatSlideToggleModule,
     MatSnackBarModule,
+    MatTabsModule,
   ],
 })
 export class MaterialModule {}
