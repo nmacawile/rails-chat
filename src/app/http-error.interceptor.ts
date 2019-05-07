@@ -7,12 +7,16 @@ import {
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
-import { retry, catchError } from 'rxjs/operators';
+import { retry, catchError, tap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
+import { CoreService } from './core.service';
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
-  constructor(private snackBar: MatSnackBar) {}
+  constructor(
+    private snackBar: MatSnackBar,
+    private coreService: CoreService,
+  ) {}
 
   intercept(
     request: HttpRequest<any>,
@@ -20,12 +24,17 @@ export class HttpErrorInterceptor implements HttpInterceptor {
   ): Observable<HttpEvent<any>> {
     return next.handle(request).pipe(
       retry(1),
+      tap({
+        error: (error: HttpErrorResponse) => {
+          if (error.status === 422) this.coreService.logOut();
+        },
+      }),
       catchError((error: HttpErrorResponse) => {
         let errorMessage = '';
-        if (error instanceof ErrorEvent)
-          errorMessage = `ERROR: ${error.error.message}`;
-        else
-          errorMessage = `ERROR CODE ${error.status}: ${error.error.message}`;
+        errorMessage =
+          error instanceof ErrorEvent
+            ? `ERROR: ${error.error.message}`
+            : `ERROR CODE ${error.status}: ${error.error.message}`;
         this.openSnackBar(errorMessage);
         return throwError(errorMessage);
       }),
