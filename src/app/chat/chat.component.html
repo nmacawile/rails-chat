@@ -1,4 +1,5 @@
-<div style="position: absolute;
+<div (scroll)="updateScroll($event)"
+     style="position: absolute;
             top: 0;
             left: 0;
             bottom: 0;
@@ -27,7 +28,7 @@
     <div *ngFor="let group of messages; last as isLast"
           class="chat-box-group chat-box-group-{{group[0].user.id !== userId ? 'left' : 'right'}}">
       <!-- CHAT_MESSAGE start -->
-      <app-message *ngFor="let message of group" [message]="message"></app-message>
+      <app-message *ngFor="let message of group" [scrollIntoView]="scrolledToBottom" [message]="message"></app-message>
       <!-- CHAT_MESSAGE end -->
     </div>
   </div>

@@ -31,6 +31,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   chatSub: Subscription;
   channel: Channel;
   clusterFunction: Function;
+  scrolledToBottom: boolean = true;
 
   constructor(
     private route: ActivatedRoute,
@@ -91,6 +92,14 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.messagesSub.unsubscribe();
     this.channel.unsubscribe();
     this.channelSub.unsubscribe();
+  }
+
+  updateScroll(event: Event) {
+    const scrollable: Element = <Element>event.target;
+    this.scrolledToBottom = Math.abs(
+      scrollable.scrollHeight -
+        (scrollable.scrollTop + scrollable.clientHeight),
+    ) < 100;
   }
 
   sendMessage() {

@@ -1,6 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { ScrollDispatchModule } from '@angular/cdk/scrolling';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -37,7 +36,6 @@ import { ActionCableService } from 'angular2-actioncable'
     ReactiveFormsModule,
     BrowserAnimationsModule,
     MaterialModule,
-    ScrollDispatchModule,
     HttpClientModule,
     JwtModule.forRoot({
       config: {

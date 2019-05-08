@@ -1,12 +1,10 @@
 import {
   Component,
-  OnInit,
   AfterViewInit,
   ViewChild,
   ElementRef,
   Input,
 } from '@angular/core';
-import { ScrollPositionService } from '../scroll-position.service';
 import { Message } from '../message';
 
 @Component({
@@ -14,18 +12,18 @@ import { Message } from '../message';
   templateUrl: './message.component.html',
   styleUrls: ['./message.component.scss'],
 })
-export class MessageComponent implements OnInit, AfterViewInit {
+export class MessageComponent implements AfterViewInit {
   @ViewChild('messageCard', { read: ElementRef })
   messageCard: ElementRef;
 
-  @Input('message') message: Message;
+  @Input('message')
+  message: Message;
 
-  constructor(private scrollPositionService: ScrollPositionService) {}
-
-  ngOnInit() {}
+  @Input('scrollIntoView')
+  scrollIntoView: boolean;
 
   ngAfterViewInit() {
-    if (this.scrollPositionService.scrolledToBottom)
-      this.messageCard.nativeElement.scrollIntoView();
+    if (this.scrollIntoView)
+      setTimeout(() => this.messageCard.nativeElement.scrollIntoView(), 0);
   }
 }
