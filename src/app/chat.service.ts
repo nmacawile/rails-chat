@@ -19,8 +19,10 @@ export class ChatService {
     return this.http.get<Chat>(`https://${baseUrl}/chats/${chatId}`);
   }
 
-  getUsers(): Observable<User[]> {
-    return this.http.get<User[]>(`https://${baseUrl}/users/`);
+  getUsers(query = ''): Observable<User[]> {
+    return this.http.get<User[]>(`https://${baseUrl}/users/`, {
+      params: { q: query },
+    });
   }
 
   openChat(userId: number): Observable<Chat> {

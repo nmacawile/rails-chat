@@ -10,6 +10,12 @@
     </mat-nav-list>
   </mat-tab>
   <mat-tab label="PEOPLE">
+    <div style="padding: 16px;">
+      <mat-form-field style="width: 100%;">
+        <input matInput placeholder="Search" ngModel (ngModelChange)="updateUsers($event)">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </div>    
     <mat-nav-list>
       <a mat-list-item *ngFor="let user of users" (click)="openChat(user.id)">
          <h4 matLine class="mat-h4">{{user.name}}</h4>
