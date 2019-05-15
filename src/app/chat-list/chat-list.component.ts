@@ -3,7 +3,7 @@ import { ChatService } from '../chat.service';
 import { Router } from '@angular/router';
 import { Chat } from '../chat';
 import { User } from '../user';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription, combineLatest } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 
 @Component({
@@ -15,32 +15,44 @@ export class ChatListComponent implements OnInit, OnDestroy {
   chats: Chat[];
   users: User[];
   querySubject: BehaviorSubject<string> = new BehaviorSubject('');
+  pageSubject: BehaviorSubject<number> = new BehaviorSubject(0);
   querySubscription: Subscription;
+  totalUsers: number;
 
   constructor(private chatService: ChatService, private router: Router) {}
 
   ngOnInit() {
     this.chatService.getChats().subscribe(chats => (this.chats = chats));
-    this.querySubscription = this.querySubject
+    this.querySubscription = combineLatest(this.pageSubject, this.querySubject)
       .pipe(
-        debounceTime(200),
+        debounceTime(100),
         distinctUntilChanged(),
-        switchMap((query: string) => this.chatService.getUsers(query)),
+        switchMap(([page, query]) =>
+          this.chatService.getUsers(query, page + 1),
+        ),
       )
-      .subscribe(users => (this.users = users));
+      .subscribe(data => {
+        this.users = data.users;
+        this.totalUsers = data.count;
+      });
   }
 
   ngOnDestroy() {
     this.querySubscription.unsubscribe();
   }
 
-  updateUsers(query: string) {
+  updateQuery(query: string) {
     this.querySubject.next(query);
+    this.pageSubject.next(0);
   }
 
   openChat(userId: number) {
     this.chatService
       .openChat(userId)
       .subscribe(chat => this.router.navigate([`/chat/${chat.id}`]));
+  }
+
+  changePage(event) {
+    this.pageSubject.next(event.pageIndex);
   }
 }

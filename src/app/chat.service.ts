@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { baseUrl } from '../environments/base-url';
 import { Observable } from 'rxjs';
 import { Chat } from './chat';
-import { User } from './user';
+import { PaginatedUsers } from './paginated-users';
 
 @Injectable({
   providedIn: 'root',
@@ -19,9 +19,9 @@ export class ChatService {
     return this.http.get<Chat>(`https://${baseUrl}/chats/${chatId}`);
   }
 
-  getUsers(query = ''): Observable<User[]> {
-    return this.http.get<User[]>(`https://${baseUrl}/users/`, {
-      params: { q: query },
+  getUsers(query = '', page = 1): Observable<PaginatedUsers> {
+    return this.http.get<PaginatedUsers>(`https://${baseUrl}/users/`, {
+      params: { q: query, page: page.toString() },
     });
   }
 
