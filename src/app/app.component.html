@@ -38,7 +38,7 @@
   <!-- SIDENAV end -->
 
   <!-- MAIN_TOOLBAR start -->
-  <mat-toolbar color="primary" class="topbar-sticky">
+  <mat-toolbar color="primary">
     <mat-toolbar-row>
       <button mat-icon-button
               [style.margin-right.px]="8"
@@ -49,7 +49,11 @@
     </mat-toolbar-row>
   </mat-toolbar>
   <!-- MAIN_TOOLBAR end -->
-  <div [@slideIn]="o && o.activatedRouteData && o.activatedRouteData['type']">
+  <div class="main-content mat-elevation-z3"
+       style="overflow: hidden;
+              margin: 8px;
+              height: 100%;"
+       [@slideIn]="o && o.activatedRouteData && o.activatedRouteData['type']">
     <router-outlet #o="outlet"></router-outlet>
   </div>
 </mat-sidenav-container>

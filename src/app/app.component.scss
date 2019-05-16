@@ -5,3 +5,9 @@
 .sidenav-list mat-icon {
   margin-right: 24px;
 }
+
+.mat-sidenav-content {
+  box-sizing: border-box;
+  display: flex !important;
+  flex-direction: column;
+}
