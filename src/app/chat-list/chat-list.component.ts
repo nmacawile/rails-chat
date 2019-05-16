@@ -10,6 +10,7 @@ import {
   switchMap,
   tap,
 } from 'rxjs/operators';
+import { CoreService } from '../core.service';
 
 @Component({
   selector: 'app-chat-list',
@@ -26,7 +27,11 @@ export class ChatListComponent implements OnInit, OnDestroy {
   queryInProgress: boolean = true;
   fetchingChats: boolean = true;
 
-  constructor(private chatService: ChatService, private router: Router) {}
+  constructor(
+    private chatService: ChatService,
+    private router: Router,
+    private coreService: CoreService,
+  ) {}
 
   ngOnInit() {
     this.chatService
