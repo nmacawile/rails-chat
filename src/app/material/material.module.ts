@@ -12,6 +12,7 @@ import {
   MatSnackBarModule,
   MatTabsModule,
   MatPaginatorModule,
+  MatProgressSpinnerModule,
 } from '@angular/material';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
@@ -31,6 +32,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     MatSnackBarModule,
     MatTabsModule,
     MatPaginatorModule,
+    MatProgressSpinnerModule,
   ],
 })
 export class MaterialModule {}

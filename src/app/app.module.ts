@@ -19,7 +19,8 @@ import { baseUrl } from '../environments/base-url';
 import { HttpErrorInterceptor } from './http-error.interceptor';
 import { RegisterComponent } from './register/register.component';
 import { AttachHeaderInterceptor } from './attach-header.interceptor';
-import { ActionCableService } from 'angular2-actioncable'
+import { ActionCableService } from 'angular2-actioncable';
+import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.component'
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { ActionCableService } from 'angular2-actioncable'
     ChatListComponent,
     LoginComponent,
     RegisterComponent,
+    LoadingSpinnerComponent,
   ],
   imports: [
     BrowserModule,

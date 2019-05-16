@@ -4,7 +4,12 @@ import { Router } from '@angular/router';
 import { Chat } from '../chat';
 import { User } from '../user';
 import { BehaviorSubject, Subscription, combineLatest } from 'rxjs';
-import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  switchMap,
+  tap,
+} from 'rxjs/operators';
 
 @Component({
   selector: 'app-chat-list',
@@ -18,18 +23,25 @@ export class ChatListComponent implements OnInit, OnDestroy {
   pageSubject: BehaviorSubject<number> = new BehaviorSubject(0);
   querySubscription: Subscription;
   totalUsers: number;
+  queryInProgress: boolean = true;
+  fetchingChats: boolean = true;
 
   constructor(private chatService: ChatService, private router: Router) {}
 
   ngOnInit() {
-    this.chatService.getChats().subscribe(chats => (this.chats = chats));
+    this.chatService
+      .getChats()
+      .pipe(tap(() => (this.fetchingChats = false)))
+      .subscribe(chats => (this.chats = chats));
     this.querySubscription = combineLatest(this.pageSubject, this.querySubject)
       .pipe(
         debounceTime(100),
         distinctUntilChanged(),
+        tap(() => (this.queryInProgress = true)),
         switchMap(([page, query]) =>
           this.chatService.getUsers(query, page + 1),
         ),
+        tap(() => (this.queryInProgress = false)),
       )
       .subscribe(data => {
         this.users = data.users;
@@ -42,7 +54,8 @@ export class ChatListComponent implements OnInit, OnDestroy {
   }
 
   updateQuery(query: string) {
-    this.querySubject.next(query);
+    const squishedQuery = query.replace(/\s+/g, ' ').trim();
+    this.querySubject.next(squishedQuery);
     this.pageSubject.next(0);
   }
 
@@ -54,5 +67,13 @@ export class ChatListComponent implements OnInit, OnDestroy {
 
   changePage(event) {
     this.pageSubject.next(event.pageIndex);
+  }
+
+  highlightMatches(name, q) {
+    if (q === '') return name;
+    return name.replace(
+      new RegExp(q, 'ig'),
+      match => `<span class="highlight">${match}</span>`,
+    );
   }
 }

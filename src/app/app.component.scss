@@ -11,3 +11,12 @@
   display: flex !important;
   flex-direction: column;
 }
+
+.mat-tab-body-wrapper {
+  height: 100%;
+  box-sizing: border-box;
+  .mat-tab-body-content {
+    display: flex;
+    flex-direction: column;
+  }
+}
