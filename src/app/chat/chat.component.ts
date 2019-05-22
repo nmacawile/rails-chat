@@ -8,10 +8,12 @@ import { Chat } from '../chat';
 import { Message } from '../message';
 import { switchMap, shareReplay } from 'rxjs/operators';
 import { Subscription, Observable, of } from 'rxjs';
-import { ActionCableService, Channel } from 'angular2-actioncable';
+import { ActionCableService, Channel, Cable } from 'angular2-actioncable';
 import { baseUrl } from '../../environments/base-url';
 import { tokenGetter } from '../token-store';
 import { cluster, addToCluster } from '../cluster-array';
+
+const CABLE_URL = `ws://${baseUrl}/cable`;
 
 @Component({
   selector: 'app-chat',
@@ -29,7 +31,6 @@ export class ChatComponent implements OnInit, OnDestroy {
   channelSub: Subscription;
   messagesSub: Subscription;
   chatSub: Subscription;
-  channel: Channel;
   clusterFunction: Function;
   scrolledToBottom: boolean = true;
 
@@ -68,11 +69,11 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.channelSub = this.routeObs
       .pipe(
         switchMap(chatId => {
-          const cable = this.cableService.cable(`ws://${baseUrl}/cable`, {
+          const cable: Cable = this.cableService.cable(CABLE_URL, {
             Authorization: tokenGetter(),
           });
-          this.channel = cable.channel('ChatChannel', { chat_id: chatId });
-          return this.channel.received();
+          const channel: Channel = cable.channel('ChatChannel', { chat_id: chatId });
+          return channel.received();
         }),
       )
       .subscribe(messageString => {
@@ -90,8 +91,8 @@ export class ChatComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.chatSub.unsubscribe();
     this.messagesSub.unsubscribe();
-    this.channel.unsubscribe();
     this.channelSub.unsubscribe();
+    this.cableService.disconnect(CABLE_URL);
   }
 
   updateScroll(event: Event) {
