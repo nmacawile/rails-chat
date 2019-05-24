@@ -11,6 +11,7 @@ import {
   tap,
 } from 'rxjs/operators';
 import { CoreService } from '../core.service';
+import { CableService } from '../cable.service';
 
 @Component({
   selector: 'app-chat-list',
@@ -31,9 +32,12 @@ export class ChatListComponent implements OnInit, OnDestroy {
     private chatService: ChatService,
     private router: Router,
     private coreService: CoreService,
+    private cableService: CableService,
   ) {}
 
   ngOnInit() {
+    this.cableService.connect();
+
     this.chatService
       .getChats()
       .pipe(tap(() => (this.fetchingChats = false)))

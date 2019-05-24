@@ -4,12 +4,17 @@ import { tap } from 'rxjs/operators';
 import { tokenSetter } from './token-store';
 import { baseUrl } from '../environments/base-url';
 import { Router } from '@angular/router';
+import { CableService } from './cable.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CoreService {
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private cableService: CableService,
+  ) {}
 
   logIn(loginInfo: { email: string; password: string }) {
     return this.http
@@ -30,6 +35,7 @@ export class CoreService {
   }
 
   logOut() {
+    this.cableService.disconnect();
     localStorage.removeItem('user');
     localStorage.removeItem('auth_token');
     this.router.navigate(['/login']);

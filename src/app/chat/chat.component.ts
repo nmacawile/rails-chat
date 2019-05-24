@@ -8,12 +8,9 @@ import { Chat } from '../chat';
 import { Message } from '../message';
 import { switchMap, shareReplay } from 'rxjs/operators';
 import { Subscription, Observable, of } from 'rxjs';
-import { ActionCableService, Channel, Cable } from 'angular2-actioncable';
-import { baseUrl } from '../../environments/base-url';
-import { tokenGetter } from '../token-store';
+import { CableService } from '../cable.service';
+import { Channel } from 'angular2-actioncable';
 import { cluster, addToCluster } from '../cluster-array';
-
-const CABLE_URL = `ws://${baseUrl}/cable`;
 
 @Component({
   selector: 'app-chat',
@@ -28,7 +25,8 @@ export class ChatComponent implements OnInit, OnDestroy {
   userId: number;
   routeObs: Observable<any>;
   routeSub: Subscription;
-  channelSub: Subscription;
+  chatChannel: Channel;
+  chatChannelSub: Subscription;
   messagesSub: Subscription;
   chatSub: Subscription;
   clusterFunction: Function;
@@ -40,10 +38,12 @@ export class ChatComponent implements OnInit, OnDestroy {
     private coreService: CoreService,
     private chatService: ChatService,
     private messageService: MessageService,
-    private cableService: ActionCableService,
+    private cableService: CableService,
   ) {}
 
-  ngOnInit() {
+  ngOnInit() {    
+    this.cableService.connect();
+
     this.userId = this.coreService.currentUser.id;
 
     this.routeObs = this.route.paramMap.pipe(
@@ -66,14 +66,11 @@ export class ChatComponent implements OnInit, OnDestroy {
         this.messages = cluster(messages, this.clusterFunction);
       });
 
-    this.channelSub = this.routeObs
+    this.chatChannelSub = this.routeObs
       .pipe(
         switchMap(chatId => {
-          const cable: Cable = this.cableService.cable(CABLE_URL, {
-            Authorization: tokenGetter(),
-          });
-          const channel: Channel = cable.channel('ChatChannel', { chat_id: chatId });
-          return channel.received();
+          this.chatChannel = this.cableService.join(chatId);
+          return this.chatChannel.received();
         }),
       )
       .subscribe(messageString => {
@@ -91,16 +88,21 @@ export class ChatComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.chatSub.unsubscribe();
     this.messagesSub.unsubscribe();
-    this.channelSub.unsubscribe();
-    this.cableService.disconnect(CABLE_URL);
+    this.unsubscribeFromCable();
+  }
+
+  unsubscribeFromCable() {
+    this.chatChannel.unsubscribe();
+    this.chatChannelSub.unsubscribe();
   }
 
   updateScroll(event: Event) {
     const scrollable: Element = <Element>event.target;
-    this.scrolledToBottom = Math.abs(
-      scrollable.scrollHeight -
-        (scrollable.scrollTop + scrollable.clientHeight),
-    ) < 100;
+    this.scrolledToBottom =
+      Math.abs(
+        scrollable.scrollHeight -
+          (scrollable.scrollTop + scrollable.clientHeight),
+      ) < 100;
   }
 
   sendMessage() {
