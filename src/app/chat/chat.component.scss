@@ -36,6 +36,7 @@ $indigo-400: #5c6bc0;
 
 .chat-box-group-right {
   align-items: flex-end;
+  text-align: right;
   app-message {
     .message-card {
       background-color: $indigo-400;
