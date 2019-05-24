@@ -13,3 +13,8 @@ export function tokenSetter(data) {
   localStorage.setItem('auth_token', data['auth_token']);
   localStorage.setItem('user', JSON.stringify(data['user']));
 }
+
+export function tokenRemover() {
+  localStorage.removeItem('user');
+  localStorage.removeItem('auth_token');
+}
