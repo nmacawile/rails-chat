@@ -9,7 +9,6 @@ import { Message } from '../message';
 import { switchMap, shareReplay } from 'rxjs/operators';
 import { Subscription, Observable, of } from 'rxjs';
 import { CableService } from '../cable.service';
-import { Channel } from 'angular2-actioncable';
 import { cluster, addToCluster } from '../cluster-array';
 
 @Component({
@@ -25,8 +24,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   userId: number;
   routeObs: Observable<any>;
   routeSub: Subscription;
-  chatChannel: Channel;
-  chatChannelSub: Subscription;
+  chatRoomSub: Subscription;
   messagesSub: Subscription;
   chatSub: Subscription;
   clusterFunction: Function;
@@ -41,7 +39,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     private cableService: CableService,
   ) {}
 
-  ngOnInit() {    
+  ngOnInit() {
     this.cableService.connect();
 
     this.userId = this.coreService.currentUser.id;
@@ -66,15 +64,9 @@ export class ChatComponent implements OnInit, OnDestroy {
         this.messages = cluster(messages, this.clusterFunction);
       });
 
-    this.chatChannelSub = this.routeObs
-      .pipe(
-        switchMap(chatId => {
-          this.chatChannel = this.cableService.join(chatId);
-          return this.chatChannel.received();
-        }),
-      )
-      .subscribe(messageString => {
-        const message: Message = JSON.parse(messageString);
+    this.chatRoomSub = this.routeObs
+      .pipe(switchMap(chatId => this.cableService.chatRoom(chatId)))
+      .subscribe((message: Message) => {
         this.clusterFunction(message)
           ? this.addToSent(message)
           : this.addToReceived(message);
@@ -88,12 +80,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.chatSub.unsubscribe();
     this.messagesSub.unsubscribe();
-    this.unsubscribeFromCable();
-  }
-
-  unsubscribeFromCable() {
-    this.chatChannel.unsubscribe();
-    this.chatChannelSub.unsubscribe();
+    this.chatRoomSub.unsubscribe();
   }
 
   updateScroll(event: Event) {
