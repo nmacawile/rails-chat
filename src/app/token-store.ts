@@ -4,7 +4,7 @@ export function tokenGetter() {
   return localStorage.getItem('auth_token');
 }
 
-export function userGetter() {
+export function userGetter(): User {
   const userJson = localStorage.getItem('user');
   return JSON.parse(userJson);
 }
