@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActionCableService, Cable, Channel } from 'angular2-actioncable';
 import { baseUrl } from '../environments/base-url';
 import { tokenGetter } from './token-store';
-import { map, filter, tap, share } from 'rxjs/operators';
+import { map, filter, tap } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
 import { Message } from './message';
 import { MatSnackBar } from '@angular/material';
@@ -56,7 +56,6 @@ export class CableService {
   private chatChannelReceived() {
     return this.chatChannel.received().pipe(
       map((messageData: string) => JSON.parse(messageData)),
-      share(),
     );
   }
 
