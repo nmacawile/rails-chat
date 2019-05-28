@@ -8,6 +8,7 @@ import { Message } from './message';
 import { Chat } from './chat';
 import { MatSnackBar } from '@angular/material';
 import { userGetter } from './token-store';
+import { Router } from '@angular/router';
 
 const CABLE_URL = `ws://${baseUrl}/cable`;
 
@@ -22,6 +23,7 @@ export class CableService {
   constructor(
     private actionCableService: ActionCableService,
     private snackBar: MatSnackBar,
+    private router: Router,
   ) {}
 
   connect() {
@@ -50,13 +52,14 @@ export class CableService {
   }
 
   private openSnackBar(chat: Chat) {
-    this.snackBar.open(
+    const snackbar = this.snackBar.open(
       `${chat.latest_message.user.name}: ${chat.latest_message.content}`,
-      'CLOSE',
+      'VIEW',
       {
         duration: 5000,
         verticalPosition: 'top',
       },
     );
+    snackbar.onAction().subscribe(() => this.router.navigate(['chat', chat.id]));
   }
 }
