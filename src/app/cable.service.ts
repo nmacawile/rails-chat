@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { ActionCableService, Cable, Channel } from 'angular2-actioncable';
 import { baseUrl } from '../environments/base-url';
 import { tokenGetter } from './token-store';
-import { map, filter, tap } from 'rxjs/operators';
+import { map, filter } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
 import { Message } from './message';
+import { Chat } from './chat';
 import { MatSnackBar } from '@angular/material';
 import { userGetter } from './token-store';
 
@@ -15,7 +16,7 @@ const CABLE_URL = `ws://${baseUrl}/cable`;
 })
 export class CableService {
   cable: Cable;
-  chatChannel: Channel;
+  notificationsChannel: Channel;
   notificationsSub: Subscription;
 
   constructor(
@@ -28,40 +29,29 @@ export class CableService {
       this.cable = this.actionCableService.cable(CABLE_URL, {
         Authorization: tokenGetter(),
       });
-      this.chatChannel = this.cable.channel('ChatChannel');
-      this.notificationsSub = this.chatNotifications().subscribe();
+
+      this.notificationsChannel = this.cable.channel('NotificationsChannel');
+      this.notificationsSub = this.notificationsChannel
+        .received()
+        .pipe(map((chatData: string) => JSON.parse(chatData)))
+        .subscribe((chat: Chat) => this.openSnackBar(chat));
     }
   }
 
   disconnect() {
-    this.chatChannel.unsubscribe();
+    this.notificationsChannel.unsubscribe();
     this.actionCableService.disconnect(CABLE_URL);
     this.notificationsSub.unsubscribe();
     this.cable = null;
   }
 
-  chatRoom(chatId: number): Observable<Message> {
-    return this.chatChannelReceived().pipe(
-      filter((message: Message) => message['chat_id'] == chatId),
-    );
+  chatRoom(chatId: number): Channel {
+    return this.cable.channel('ChatChannel', { chat_id: chatId });
   }
 
-  private chatNotifications() {
-    return this.chatChannelReceived().pipe(
-      filter((message: Message) => message.user.id != userGetter().id),
-      tap((message: Message) => this.openSnackBar(message)),
-    );
-  }
-
-  private chatChannelReceived() {
-    return this.chatChannel.received().pipe(
-      map((messageData: string) => JSON.parse(messageData)),
-    );
-  }
-
-  private openSnackBar(message: Message) {
+  private openSnackBar(chat: Chat) {
     this.snackBar.open(
-      `${message.user.name}: ${message.content.substring(0, 50)}`,
+      `${chat.latest_message.user.name}: ${chat.latest_message.content}`,
       'CLOSE',
       {
         duration: 5000,

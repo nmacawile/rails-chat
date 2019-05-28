@@ -6,10 +6,11 @@ import { MessageService } from '../message.service';
 import { ChatService } from '../chat.service';
 import { Chat } from '../chat';
 import { Message } from '../message';
-import { switchMap, shareReplay } from 'rxjs/operators';
+import { switchMap, shareReplay, map } from 'rxjs/operators';
 import { Subscription, Observable, of } from 'rxjs';
 import { CableService } from '../cable.service';
 import { cluster, addToCluster } from '../cluster-array';
+import { Channel } from 'angular2-actioncable';
 
 @Component({
   selector: 'app-chat',
@@ -24,6 +25,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   userId: number;
   routeObs: Observable<any>;
   routeSub: Subscription;
+  chatRoom: Channel;
   chatRoomSub: Subscription;
   messagesSub: Subscription;
   chatSub: Subscription;
@@ -65,7 +67,13 @@ export class ChatComponent implements OnInit, OnDestroy {
       });
 
     this.chatRoomSub = this.routeObs
-      .pipe(switchMap(chatId => this.cableService.chatRoom(chatId)))
+      .pipe(
+        switchMap(chatId => {
+          this.chatRoom = this.cableService.chatRoom(chatId);
+          return this.chatRoom.received()
+        }),
+        map((messageData: string) => JSON.parse(messageData)),
+      )
       .subscribe((message: Message) => {
         this.clusterFunction(message)
           ? this.addToSent(message)
@@ -80,6 +88,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.chatSub.unsubscribe();
     this.messagesSub.unsubscribe();
+    this.chatRoom.unsubscribe();
     this.chatRoomSub.unsubscribe();
   }
 
