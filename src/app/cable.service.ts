@@ -63,7 +63,7 @@ export class CableService {
       `${chat.latest_message.user.name}: ${chat.latest_message.content}`,
       'VIEW',
       {
-        duration: 5000,
+        duration: 1500,
         verticalPosition: 'top',
       },
     );
