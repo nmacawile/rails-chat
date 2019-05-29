@@ -5,5 +5,4 @@ export interface Message {
   content: string;
   created_at: Date;
   user: User;
-  chat_id: number;
 }
