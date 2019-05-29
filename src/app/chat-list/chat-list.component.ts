@@ -65,7 +65,8 @@ export class ChatListComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     this.notificationsSubscription = this.cableService.notificationsReceived.subscribe(
       (newChat: Chat) => {
-        const index = this.chats && this.chats.findIndex(chat => chat.id == newChat.id);
+        const index =
+          this.chats && this.chats.findIndex(chat => chat.id == newChat.id);
         this.chats.splice(index, 1);
         this.chats.unshift(newChat);
       },
@@ -74,7 +75,8 @@ export class ChatListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.presenceSubscription = this.cableService.presenceChannel
       .received()
       .subscribe((presence: { id: number; present: boolean }) => {
-        const chat = this.chats && this.chats.find(c => c.user.id == presence.id);
+        const chat =
+          this.chats && this.chats.find(c => c.user.id == presence.id);
         if (chat) chat.user.present = presence.present;
       });
   }
@@ -86,9 +88,16 @@ export class ChatListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   updateQuery(query: string) {
-    const squishedQuery = query.replace(/\s+/g, ' ').trim();
-    this.querySubject.next(squishedQuery);
+    const escapedQuery = this.escapeRegExp(query);
+    this.querySubject.next(escapedQuery);
     this.pageSubject.next(0);
+  }
+
+  private escapeRegExp(string) {
+    return string
+      .replace(/\s+/g, ' ')
+      .trim()
+      .replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   }
 
   openChat(userId: number) {
@@ -103,6 +112,7 @@ export class ChatListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   highlightMatches(name, q) {
     if (q === '') return name;
+
     return name.replace(
       new RegExp(q, 'ig'),
       match => `<span class="highlight">${match}</span>`,
