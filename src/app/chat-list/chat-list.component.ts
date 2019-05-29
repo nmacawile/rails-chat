@@ -94,7 +94,7 @@ export class ChatListComponent implements OnInit, AfterViewInit, OnDestroy {
   openChat(userId: number) {
     this.chatService
       .openChat(userId)
-      .subscribe(chat => this.router.navigate([`/chat/${chat.id}`]));
+      .subscribe(chat => this.router.navigate(['chat', chat.id]));
   }
 
   changePage(event) {
