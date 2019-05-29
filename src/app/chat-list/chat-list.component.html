@@ -2,7 +2,7 @@
   <mat-tab label="CHATS">
     <app-loading-spinner *ngIf="fetchingChats"></app-loading-spinner>
     <mat-nav-list>
-      <a mat-list-item *ngFor="let chat of chats" routerLink="/chat/{{chat.id}}">
+      <a mat-list-item @chats *ngFor="let chat of chats" routerLink="/chat/{{chat.id}}">
          <h4 matLine class="mat-h4">{{chat.user.name}}</h4>
          <p matLine [style.color]="'rgba(0,0,0,.54)'">
            <span class="mat-body-2" [style.paddingRight.px]="4">
@@ -27,7 +27,7 @@
       </mat-form-field>
     </div>
     <mat-nav-list style="margin-bottom: auto;">
-      <a mat-list-item *ngFor="let user of users" (click)="openChat(user.id)">
+      <a mat-list-item @chats *ngFor="let user of users" (click)="openChat(user.id)">
          <h4 matLine
              class="mat-h4"
              [innerHTML]="highlightMatches(user.name, (querySubject | async))">           

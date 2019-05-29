@@ -12,11 +12,13 @@ import {
 } from 'rxjs/operators';
 import { CoreService } from '../core.service';
 import { CableService } from '../cable.service';
+import { chatListAnimation } from '../animations';
 
 @Component({
   selector: 'app-chat-list',
   templateUrl: './chat-list.component.html',
   styleUrls: ['./chat-list.component.scss'],
+  animations: chatListAnimation,
 })
 export class ChatListComponent implements OnInit, OnDestroy {
   chats: Chat[];

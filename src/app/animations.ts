@@ -5,6 +5,7 @@ import {
   style,
   animate,
   group,
+  stagger,
 } from '@angular/animations';
 
 const slideStyle = {
@@ -14,6 +15,8 @@ const slideStyle = {
   bottom: 0,
   width: '100%',
 };
+
+const transitionStyle = '.6s cubic-bezier(.8, -0.6, 0.2, 1.5)';
 
 export const routeAnimation = trigger('slideIn', [
   transition('ChatList => Chat', [
@@ -25,21 +28,20 @@ export const routeAnimation = trigger('slideIn', [
             ...slideStyle,
             left: '100%',
           }),
-          animate(100, style({ left: 0 })),
+          animate(transitionStyle, style({ left: 0 })),
         ],
         { optional: true },
       ),
       query(
         ':leave',
         [
-           style({
-             position: 'relative'
-           }),
+          style({
+            position: 'relative',
+          }),
         ],
         { optional: true },
       ),
     ]),
-
   ]),
   transition('Chat => ChatList', [
     query(
@@ -49,9 +51,21 @@ export const routeAnimation = trigger('slideIn', [
           ...slideStyle,
           left: 0,
         }),
-        animate(100, style({ left: '100%' })),
+        animate(transitionStyle, style({ left: '100%' })),
       ],
       { optional: true },
     ),
   ]),
 ]);
+
+export const chatListAnimation = [
+  trigger('chats', [
+    transition(':enter', [
+      style({ transform: 'scale(0.5)', opacity: 0 }),
+      animate(
+        transitionStyle,
+        style({ transform: 'scale(1)', opacity: 1 }),
+      ),
+    ]),
+  ]),
+];
