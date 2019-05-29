@@ -24,6 +24,7 @@ export class ChatListComponent implements OnInit, OnDestroy {
   querySubject: BehaviorSubject<string> = new BehaviorSubject('');
   pageSubject: BehaviorSubject<number> = new BehaviorSubject(0);
   querySubscription: Subscription;
+  notificationsSubscription: Subscription;
   totalUsers: number;
   queryInProgress: boolean = true;
   fetchingChats: boolean = true;
@@ -37,6 +38,13 @@ export class ChatListComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.cableService.connect();
+    this.notificationsSubscription = this.cableService.notificationsReceived.subscribe(
+      (newChat: Chat) => {
+        const index = this.chats.findIndex(chat => chat.id == newChat.id);
+        this.chats.splice(index, 1);
+        this.chats.unshift(newChat);
+      },
+    );
 
     this.chatService
       .getChats()
@@ -60,6 +68,7 @@ export class ChatListComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.querySubscription.unsubscribe();
+    this.notificationsSubscription.unsubscribe();
   }
 
   updateQuery(query: string) {

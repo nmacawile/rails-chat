@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import { ActionCableService, Cable, Channel } from 'angular2-actioncable';
 import { baseUrl } from '../environments/base-url';
-import { tokenGetter } from './token-store';
+import { tokenGetter, userGetter } from './token-store';
 import { map, filter } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
 import { Message } from './message';
 import { Chat } from './chat';
 import { MatSnackBar } from '@angular/material';
-import { userGetter } from './token-store';
 import { Router } from '@angular/router';
 
 const CABLE_URL = `ws://${baseUrl}/cable`;
@@ -18,6 +17,7 @@ const CABLE_URL = `ws://${baseUrl}/cable`;
 export class CableService {
   cable: Cable;
   notificationsChannel: Channel;
+  notificationsReceived: Observable<Chat>;
   notificationsSub: Subscription;
 
   constructor(
@@ -33,9 +33,16 @@ export class CableService {
       });
 
       this.notificationsChannel = this.cable.channel('NotificationsChannel');
-      this.notificationsSub = this.notificationsChannel
+      this.notificationsReceived = this.notificationsChannel
         .received()
-        .pipe(map((chatData: string) => JSON.parse(chatData)))
+        .pipe(map((chatData: string) => JSON.parse(chatData)));
+      this.notificationsSub = this.notificationsReceived
+        .pipe(
+          filter(
+            (chat: Chat) =>
+              chat.latest_message.user.id != userGetter().id,
+          ),
+        )
         .subscribe((chat: Chat) => this.openSnackBar(chat));
     }
   }
@@ -60,6 +67,8 @@ export class CableService {
         verticalPosition: 'top',
       },
     );
-    snackbar.onAction().subscribe(() => this.router.navigate(['chat', chat.id]));
+    snackbar
+      .onAction()
+      .subscribe(() => this.router.navigate(['chat', chat.id]));
   }
 }
