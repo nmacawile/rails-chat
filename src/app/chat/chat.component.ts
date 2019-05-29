@@ -1,4 +1,10 @@
-import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  OnDestroy,
+  ViewEncapsulation,
+} from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { FormBuilder, FormGroup, AbstractControl } from '@angular/forms';
 import { CoreService } from '../core.service';
@@ -6,7 +12,7 @@ import { MessageService } from '../message.service';
 import { ChatService } from '../chat.service';
 import { Chat } from '../chat';
 import { Message } from '../message';
-import { switchMap, shareReplay, map } from 'rxjs/operators';
+import { switchMap, shareReplay, map, filter } from 'rxjs/operators';
 import { Subscription, Observable, of } from 'rxjs';
 import { CableService } from '../cable.service';
 import { cluster, addToCluster } from '../cluster-array';
@@ -18,7 +24,7 @@ import { Channel } from 'angular2-actioncable';
   styleUrls: ['./chat.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class ChatComponent implements OnInit, OnDestroy {
+export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
   chat: Chat;
   messages: Array<Array<Message>> = [];
   chatMessageForm: FormGroup;
@@ -31,6 +37,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   chatSub: Subscription;
   clusterFunction: Function;
   scrolledToBottom: boolean = true;
+  presenceSub: Subscription;
 
   constructor(
     private route: ActivatedRoute,
@@ -70,7 +77,7 @@ export class ChatComponent implements OnInit, OnDestroy {
       .pipe(
         switchMap(chatId => {
           this.chatRoom = this.cableService.chatRoom(chatId);
-          return this.chatRoom.received()
+          return this.chatRoom.received();
         }),
         map((messageData: string) => JSON.parse(messageData)),
       )
@@ -85,11 +92,26 @@ export class ChatComponent implements OnInit, OnDestroy {
     });
   }
 
+  ngAfterViewInit() {
+    this.presenceSub = this.cableService.presenceChannel
+      .received()
+      .pipe(
+        filter(
+          (presence: { id: number; present: boolean }) =>
+            this.chat && presence.id == this.chat.user.id,
+        ),
+      )
+      .subscribe((presence: { id: number; present: boolean }) => {
+        if (this.chat) this.chat.user.present = presence.present;
+      });
+  }
+
   ngOnDestroy() {
     this.chatSub.unsubscribe();
     this.messagesSub.unsubscribe();
     this.chatRoom.unsubscribe();
     this.chatRoomSub.unsubscribe();
+    this.presenceSub.unsubscribe();
   }
 
   updateScroll(event: Event) {

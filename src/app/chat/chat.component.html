@@ -13,7 +13,10 @@
       <button mat-icon-button [style.margin-right.px]="8" routerLink="">
         <mat-icon>arrow_back</mat-icon>
       </button>
+
       <span>{{chat?.user.name}}</span>
+      <mat-icon *ngIf="chat && chat.user.present" mat-list-icon color="primary" style="margin-left: auto;">sms</mat-icon>
+      <mat-icon *ngIf="!(chat && chat.user.present)" mat-list-icon style="color: rgba(0,0,0,.54); margin-left: auto;">sms_failed</mat-icon>
       <!-- <div style="margin-left: auto">
         <button mat-button>
           Test

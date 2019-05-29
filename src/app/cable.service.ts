@@ -8,6 +8,7 @@ import { Message } from './message';
 import { Chat } from './chat';
 import { MatSnackBar } from '@angular/material';
 import { Router } from '@angular/router';
+import { User } from './user';
 
 const CABLE_URL = `ws://${baseUrl}/cable`;
 
@@ -19,6 +20,7 @@ export class CableService {
   notificationsChannel: Channel;
   notificationsReceived: Observable<Chat>;
   notificationsSub: Subscription;
+  presenceChannel: Channel;
 
   constructor(
     private actionCableService: ActionCableService,
@@ -39,16 +41,18 @@ export class CableService {
       this.notificationsSub = this.notificationsReceived
         .pipe(
           filter(
-            (chat: Chat) =>
-              chat.latest_message.user.id != userGetter().id,
+            (chat: Chat) => chat.latest_message.user.id != userGetter().id,
           ),
         )
         .subscribe((chat: Chat) => this.openSnackBar(chat));
+
+      this.presenceChannel = this.cable.channel('PresenceChannel');
     }
   }
 
   disconnect() {
     this.notificationsChannel.unsubscribe();
+    this.presenceChannel.unsubscribe();
     this.actionCableService.disconnect(CABLE_URL);
     this.notificationsSub.unsubscribe();
     this.cable = null;

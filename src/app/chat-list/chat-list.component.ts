@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { ChatService } from '../chat.service';
 import { Router } from '@angular/router';
 import { Chat } from '../chat';
@@ -20,13 +20,14 @@ import { chatListAnimation } from '../animations';
   styleUrls: ['./chat-list.component.scss'],
   animations: chatListAnimation,
 })
-export class ChatListComponent implements OnInit, OnDestroy {
+export class ChatListComponent implements OnInit, AfterViewInit, OnDestroy {
   chats: Chat[];
   users: User[];
   querySubject: BehaviorSubject<string> = new BehaviorSubject('');
   pageSubject: BehaviorSubject<number> = new BehaviorSubject(0);
   querySubscription: Subscription;
   notificationsSubscription: Subscription;
+  presenceSubscription: Subscription;
   totalUsers: number;
   queryInProgress: boolean = true;
   fetchingChats: boolean = true;
@@ -40,13 +41,6 @@ export class ChatListComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.cableService.connect();
-    this.notificationsSubscription = this.cableService.notificationsReceived.subscribe(
-      (newChat: Chat) => {
-        const index = this.chats.findIndex(chat => chat.id == newChat.id);
-        this.chats.splice(index, 1);
-        this.chats.unshift(newChat);
-      },
-    );
 
     this.chatService
       .getChats()
@@ -68,9 +62,27 @@ export class ChatListComponent implements OnInit, OnDestroy {
       });
   }
 
+  ngAfterViewInit() {
+    this.notificationsSubscription = this.cableService.notificationsReceived.subscribe(
+      (newChat: Chat) => {
+        const index = this.chats && this.chats.findIndex(chat => chat.id == newChat.id);
+        this.chats.splice(index, 1);
+        this.chats.unshift(newChat);
+      },
+    );
+
+    this.presenceSubscription = this.cableService.presenceChannel
+      .received()
+      .subscribe((presence: { id: number; present: boolean }) => {
+        const chat = this.chats && this.chats.find(c => c.user.id == presence.id);
+        if (chat) chat.user.present = presence.present;
+      });
+  }
+
   ngOnDestroy() {
     this.querySubscription.unsubscribe();
     this.notificationsSubscription.unsubscribe();
+    this.presenceSubscription.unsubscribe();
   }
 
   updateQuery(query: string) {
