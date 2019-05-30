@@ -1,6 +1,6 @@
 import { User } from './user';
 
-export function tokenGetter() {
+export function tokenGetter(): string {
   return localStorage.getItem('auth_token');
 }
 
@@ -9,9 +9,13 @@ export function userGetter(): User {
   return JSON.parse(userJson);
 }
 
-export function tokenSetter(data) {
+export function userSetter(data: User) {
+  localStorage.setItem('user', JSON.stringify(data));
+}
+
+export function tokenSetter(data: { auth_token: string, user: User}) {
   localStorage.setItem('auth_token', data['auth_token']);
-  localStorage.setItem('user', JSON.stringify(data['user']));
+  userSetter(data['user']);
 }
 
 export function tokenRemover() {
