@@ -19,7 +19,7 @@ export class AppComponent {
     if (this.coreService.userSignedIn()) {
       this.coreService.validateToken().subscribe((userData: User) => {
         userSetter(userData);
-        this.visible = this.coreService.currentUser.visible;
+        this.visible = userData.visible;
       });
     }
   }
