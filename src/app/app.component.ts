@@ -2,6 +2,8 @@ import { Component, ViewEncapsulation } from '@angular/core';
 import { routeAnimation } from './animations';
 import { CoreService } from './core.service';
 import { Router } from '@angular/router';
+import { userSetter } from './token-store';
+import { User } from './user';
 
 @Component({
   selector: 'app-root',
@@ -11,10 +13,23 @@ import { Router } from '@angular/router';
   encapsulation: ViewEncapsulation.None,
 })
 export class AppComponent {
-  constructor(private core: CoreService, private router: Router) {}
+  visible: boolean;
+
+  constructor(private coreService: CoreService, private router: Router) {
+    if (this.coreService.userSignedIn()) {
+      this.coreService.validateToken().subscribe((userData: User) => {
+        userSetter(userData);
+        this.visible = this.coreService.currentUser.visible;
+      });
+    }
+  }
 
   logOut() {
-    this.core.logOut();
+    this.coreService.logOut();
     this.router.navigate(['/login']);
+  }
+
+  toggleVisibility() {
+    this.coreService.updateVisibility(this.visible).subscribe();
   }
 }

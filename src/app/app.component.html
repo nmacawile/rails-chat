@@ -11,26 +11,31 @@
                         background-size: cover;
                         background-position: center;">
       <mat-toolbar-row style="grid-row-start: 3;">
-        <div *ngIf="core.userSignedIn()">
-          <div>{{core.currentUser.name}}</div>
-          <small>{{core.currentUser.email}}</small>
+        <div *ngIf="coreService.userSignedIn()">
+          <div>{{coreService.currentUser.name}}</div>
+          <small>{{coreService.currentUser.email}}</small>
         </div>
-        <div *ngIf="!core.userSignedIn()">
+        <div *ngIf="!coreService.userSignedIn()">
           You are not signed in.
         </div>
       </mat-toolbar-row>
     </mat-toolbar>
-    <mat-nav-list class="sidenav-list" *ngIf="core.userSignedIn()">
+    <mat-nav-list class="sidenav-list" *ngIf="coreService.userSignedIn()">
       <a mat-list-item><mat-icon>visibility</mat-icon>
-        <mat-slide-toggle labelPosition="before" style="width: 100%;" id="availability-toggle">
-          Available
+        <mat-slide-toggle labelPosition="before"
+          style="width: 100%;"
+          color="primary"
+          id="visibility-toggle"
+          [(ngModel)]="visible"
+          (change)="toggleVisibility()">
+          Visible
         </mat-slide-toggle>
       </a>
       <a mat-list-item><mat-icon>settings</mat-icon> <span>Settings</span></a>
       <a mat-list-item (click)="logOut()"><mat-icon>exit_to_app</mat-icon> <span>Log out</span></a>
     </mat-nav-list>
 
-    <mat-nav-list class="sidenav-list" *ngIf="!core.userSignedIn()">
+    <mat-nav-list class="sidenav-list" *ngIf="!coreService.userSignedIn()">
       <a mat-list-item routerLink="/login" routerLinkActive="active-route"><mat-icon>vpn_key</mat-icon> <span>Log In</span></a>
       <a mat-list-item routerLink="/register" routerLinkActive="active-route"><mat-icon>create</mat-icon> <span>Register</span></a>
     </mat-nav-list>

@@ -20,11 +20,7 @@ export class CoreService {
     private http: HttpClient,
     private router: Router,
     private cableService: CableService,
-  ) {
-    if (this.userSignedIn()) {
-      this.validateToken().subscribe((userData: User) => userSetter(userData));
-    }
-  }
+  ) {}
 
   validateToken() {
     return this.http.get(`https://${baseUrl}/auth/validate`);
@@ -56,6 +52,17 @@ export class CoreService {
 
   userSignedIn(): boolean {
     return !!this.currentUser;
+  }
+
+  updateVisibility(status: boolean) {
+    return this.http
+      .patch(`https://${baseUrl}/visibility`, { visible: status })
+      .pipe(
+        tap(() => {
+          const user: User = { ...this.currentUser, visible: status };
+          userSetter(user);
+        }),
+      );
   }
 
   get currentUser() {
