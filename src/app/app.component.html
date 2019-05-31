@@ -21,7 +21,9 @@
       </mat-toolbar-row>
     </mat-toolbar>
     <mat-nav-list class="sidenav-list" *ngIf="coreService.userSignedIn()">
-      <a mat-list-item><mat-icon>visibility</mat-icon>
+      <a mat-list-item>
+        <mat-icon *ngIf="visible">visibility</mat-icon>
+        <mat-icon *ngIf="!visible">visibility_off</mat-icon>
         <mat-slide-toggle labelPosition="before"
           style="width: 100%;"
           color="primary"
