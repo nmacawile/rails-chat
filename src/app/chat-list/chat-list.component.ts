@@ -67,7 +67,7 @@ export class ChatListComponent implements OnInit, AfterViewInit, OnDestroy {
       (newChat: Chat) => {
         const index =
           this.chats && this.chats.findIndex(chat => chat.id == newChat.id);
-        this.chats.splice(index, 1);
+        if (index >= 0) this.chats.splice(index, 1);
         this.chats.unshift(newChat);
       },
     );
