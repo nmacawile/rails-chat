@@ -46,16 +46,18 @@ export class CableService {
         )
         .subscribe((chat: Chat) => this.openSnackBar(chat));
 
-      this.presenceChannel = this.cable.channel('PresenceChannel');
+      this.presenceChannel = this.cable.channel('PresenceChannel');    
     }
   }
 
   disconnect() {
-    this.notificationsChannel.unsubscribe();
-    this.presenceChannel.unsubscribe();
-    this.actionCableService.disconnect(CABLE_URL);
-    this.notificationsSub.unsubscribe();
-    this.cable = null;
+    if (this.cable) {
+      this.notificationsChannel.unsubscribe();
+      this.presenceChannel.unsubscribe();
+      this.actionCableService.disconnect(CABLE_URL);
+      this.notificationsSub.unsubscribe();
+      this.cable = null;
+    }
   }
 
   chatRoom(chatId: number): Channel {

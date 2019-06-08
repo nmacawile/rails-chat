@@ -4,6 +4,8 @@ import { CoreService } from './core.service';
 import { Router } from '@angular/router';
 import { userSetter } from './token-store';
 import { User } from './user';
+import { Store, select } from '@ngrx/store';
+import { CableService } from './cable.service';
 
 @Component({
   selector: 'app-root',
@@ -15,13 +17,17 @@ import { User } from './user';
 export class AppComponent {
   visible: boolean;
 
-  constructor(private coreService: CoreService, private router: Router) {
-    if (this.coreService.userSignedIn()) {
-      this.coreService.validateToken().subscribe((userData: User) => {
-        userSetter(userData);
-        this.visible = userData.visible;
-      });
-    }
+  constructor(
+    private coreService: CoreService,
+    private cableService: CableService,
+    private router: Router,
+    private store: Store<{ user: User }>,
+  ) {
+    this.store.pipe(select('auth')).subscribe((user: User) => {
+      this.visible = user && user.visible;
+      if (user) this.cableService.connect();
+      else this.cableService.disconnect();
+    });
   }
 
   logOut() {

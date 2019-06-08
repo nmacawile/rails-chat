@@ -1,26 +1,36 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { tap } from 'rxjs/operators';
-import {
-  tokenSetter,
-  tokenRemover,
-  userGetter,
-  userSetter,
-} from './token-store';
+import { tap, take, switchMap, filter } from 'rxjs/operators';
 import { baseUrl } from '../environments/base-url';
 import { Router } from '@angular/router';
-import { CableService } from './cable.service';
 import { User } from './user';
+import { Store, select } from '@ngrx/store';
+import { logIn, logOut, update } from './auth.actions';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CoreService {
+  currentUser: User;
+
   constructor(
     private http: HttpClient,
     private router: Router,
-    private cableService: CableService,
-  ) {}
+    private store: Store<{ user: User }>,
+  ) {
+    this.store
+      .pipe(select('auth'))
+      .subscribe((user: User) => (this.currentUser = user));
+
+    this.store
+      .pipe(select('auth'))
+      .pipe(
+        take(1),
+        filter((user: User) => !!user),
+        switchMap(() => this.validateToken()),
+      )
+      .subscribe((user: User) => this.store.dispatch(update(user)));
+  }
 
   validateToken() {
     return this.http.get(`https://${baseUrl}/auth/validate`);
@@ -29,7 +39,11 @@ export class CoreService {
   logIn(loginInfo: { email: string; password: string }) {
     return this.http
       .post(`https://${baseUrl}/auth/login`, loginInfo)
-      .pipe(tap(tokenSetter));
+      .pipe(
+        tap((data: { auth_token: string; user: User }) =>
+          this.store.dispatch(logIn(data)),
+        ),
+      );
   }
 
   register(registerInfo: {
@@ -41,12 +55,15 @@ export class CoreService {
   }) {
     return this.http
       .post(`https://${baseUrl}/signup`, registerInfo)
-      .pipe(tap(tokenSetter));
+      .pipe(
+        tap((data: { auth_token: string; user: User }) =>
+          this.store.dispatch(logIn(data)),
+        ),
+      );
   }
 
   logOut() {
-    tokenRemover();
-    this.cableService.disconnect();
+    this.store.dispatch(logOut());
     this.router.navigate(['/login']);
   }
 
@@ -57,15 +74,6 @@ export class CoreService {
   updateVisibility(status: boolean) {
     return this.http
       .patch(`https://${baseUrl}/visibility`, { visible: status })
-      .pipe(
-        tap(() => {
-          const user: User = { ...this.currentUser, visible: status };
-          userSetter(user);
-        }),
-      );
-  }
-
-  get currentUser() {
-    return userGetter();
+      .pipe(tap(() => this.store.dispatch(update({ visible: status }))));
   }
 }

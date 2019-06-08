@@ -49,8 +49,6 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.cableService.connect();
-
     this.userId = this.coreService.currentUser.id;
 
     this.routeObs = this.route.paramMap.pipe(

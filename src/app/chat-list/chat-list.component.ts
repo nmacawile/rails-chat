@@ -40,8 +40,6 @@ export class ChatListComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.cableService.connect();
-
     this.chatService
       .getChats()
       .pipe(tap(() => (this.fetchingChats = false)))

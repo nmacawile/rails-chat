@@ -7,6 +7,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtModule } from '@auth0/angular-jwt';
+import { StoreModule } from '@ngrx/store';
 
 import { MaterialModule } from './material/material.module';
 import { ChatComponent } from './chat/chat.component';
@@ -20,7 +21,8 @@ import { HttpErrorInterceptor } from './http-error.interceptor';
 import { RegisterComponent } from './register/register.component';
 import { AttachHeaderInterceptor } from './attach-header.interceptor';
 import { ActionCableService } from 'angular2-actioncable';
-import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.component'
+import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.component';
+import { authReducer } from './auth.reducer';
 
 @NgModule({
   declarations: [
@@ -46,6 +48,7 @@ import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.compo
         whitelistedDomains: [baseUrl],
       },
     }),
+    StoreModule.forRoot({ auth: authReducer }),
   ],
   providers: [
     {
