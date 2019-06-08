@@ -26,7 +26,6 @@ export class AppComponent {
 
   logOut() {
     this.coreService.logOut();
-    this.router.navigate(['/login']);
   }
 
   toggleVisibility() {
