@@ -34,6 +34,7 @@
     "@angular/flex-layout": "^7.0.0-beta.24",
     "@angular/language-service": "~7.2.0",
     "@auth0/angular-jwt": "^2.1.0",
+    "@ngrx/store": "^8.0.0",
     "@types/jasmine": "~2.8.8",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "~8.9.4",

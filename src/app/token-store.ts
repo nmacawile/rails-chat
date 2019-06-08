@@ -22,3 +22,10 @@ export function tokenRemover() {
   localStorage.removeItem('user');
   localStorage.removeItem('auth_token');
 }
+
+export function userUpdater(updatedAttr: any): User {
+  const user = userGetter();
+  const updatedUser = { ...user, ...updatedAttr };
+  userSetter(updatedUser);
+  return updatedUser;
+}
