@@ -15,7 +15,7 @@ import { Message } from '../message';
 import { switchMap, shareReplay, map, filter, take } from 'rxjs/operators';
 import { Subscription, Observable, of } from 'rxjs';
 import { CableService } from '../cable.service';
-import { cluster, addToCluster, clusterCombine } from '../cluster-array';
+import { cluster, addToCluster, clusterCombine } from '../cluster-operators';
 import { Channel } from 'angular2-actioncable';
 
 @Component({
