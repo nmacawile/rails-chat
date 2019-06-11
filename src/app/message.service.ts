@@ -11,9 +11,13 @@ import { baseUrl } from '../environments/base-url';
 export class MessageService {
   constructor(private http: HttpClient) {}
 
-  getMessages(chatId: number): Observable<Message[]> {
+  getMessages(chatId: number, before: number = null): Observable<Message[]> {
+    const params = {};
+    if (before) params['before'] = before;
     return this.http
-      .get<Message[]>(`https://${baseUrl}/chats/${chatId}/messages`)
+      .get<Message[]>(`https://${baseUrl}/chats/${chatId}/messages`, {
+        params: params,
+      })
       .pipe(map((messages: Message[]) => messages.reverse()));
   }
 

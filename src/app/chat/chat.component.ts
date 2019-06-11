@@ -12,10 +12,10 @@ import { MessageService } from '../message.service';
 import { ChatService } from '../chat.service';
 import { Chat } from '../chat';
 import { Message } from '../message';
-import { switchMap, shareReplay, map, filter } from 'rxjs/operators';
+import { switchMap, shareReplay, map, filter, take } from 'rxjs/operators';
 import { Subscription, Observable, of } from 'rxjs';
 import { CableService } from '../cable.service';
-import { cluster, addToCluster } from '../cluster-array';
+import { cluster, addToCluster, clusterCombine } from '../cluster-array';
 import { Channel } from 'angular2-actioncable';
 
 @Component({
@@ -114,6 +114,8 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
 
   updateScroll(event: Event) {
     const scrollable: Element = <Element>event.target;
+    if (scrollable.scrollTop === 0) this.loadOlderMessages();
+
     this.scrolledToBottom =
       Math.abs(
         scrollable.scrollHeight -
@@ -129,6 +131,26 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         .sendMessage(this.chat.id, { content: trimmed })
         .subscribe();
     }
+  }
+
+  loadOlderMessages() {
+    this.routeObs
+      .pipe(
+        switchMap((chatId: number) =>
+          this.messageService.getMessages(chatId, this.messages[0][0].id),
+        ),
+        take(1),
+      )
+      .subscribe((oldMessages: Message[]) => {
+        if (oldMessages.length > 0) {
+          const oldMessagesCluster = cluster(oldMessages, this.clusterFunction);
+          this.messages = clusterCombine(
+            oldMessagesCluster,
+            this.messages,
+            this.clusterFunction,
+          );
+        }
+      });
   }
 
   private addToReceived(message: Message) {
