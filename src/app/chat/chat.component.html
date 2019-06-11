@@ -17,21 +17,23 @@
       <span>{{chat?.user.name}}</span>
       <mat-icon *ngIf="chat && chat.user.present" mat-list-icon color="primary" style="margin-left: auto;">sms</mat-icon>
       <mat-icon *ngIf="!(chat && chat.user.present)" mat-list-icon style="color: rgba(0,0,0,.54); margin-left: auto;">sms_failed</mat-icon>
-      <!-- <div style="margin-left: auto">
-        <button mat-button>
-          Test
-        </button>
-      </div> -->
     </mat-toolbar-row>
+    <!-- TEST_PANEL start -->
+    <!-- <mat-toolbar-row>
+      <button mat-icon-button [style.margin-left]="'auto'" (click)="loadOlderMessages()">
+        <mat-icon>bug_report</mat-icon>
+      </button>
+    </mat-toolbar-row> -->
+    <!-- TEST_PANEL end -->
   </mat-toolbar>
   <!-- CHAT_TITLEBAR end -->
 
   <!-- CHAT_MESSAGES start -->
   <div class="chat-messages">
-    <div *ngFor="let group of messages; last as isLast"
-          class="chat-box-group chat-box-group-{{group[0].user.id !== userId ? 'left' : 'right'}}">
+    <div *ngFor="let cluster of messageClusters; last as isLast"
+          class="chat-box-group chat-box-group-{{cluster.userId !== userId ? 'left' : 'right'}}">
       <!-- CHAT_MESSAGE start -->
-      <app-message *ngFor="let message of group" [scrollIntoView]="scrolledToBottom" [message]="message"></app-message>
+      <app-message *ngFor="let message of cluster.messages" [scrollIntoView]="scrolledToBottom" [message]="message"></app-message>
       <!-- CHAT_MESSAGE end -->
     </div>
   </div>

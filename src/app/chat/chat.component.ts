@@ -15,8 +15,13 @@ import { Message } from '../message';
 import { switchMap, shareReplay, map, filter, take } from 'rxjs/operators';
 import { Subscription, Observable, of } from 'rxjs';
 import { CableService } from '../cable.service';
-import { cluster, addToCluster, clusterCombine } from '../cluster-operators';
+import {
+  createClusters,
+  addIntoClusters,
+  combineClusters,
+} from '../cluster-operators';
 import { Channel } from 'angular2-actioncable';
+import { Cluster } from '../cluster';
 
 @Component({
   selector: 'app-chat',
@@ -26,7 +31,8 @@ import { Channel } from 'angular2-actioncable';
 })
 export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
   chat: Chat;
-  messages: Array<Array<Message>> = [];
+  messageClusters: Cluster[];
+
   chatMessageForm: FormGroup;
   userId: number;
   routeObs: Observable<any>;
@@ -35,7 +41,6 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
   chatRoomSub: Subscription;
   messagesSub: Subscription;
   chatSub: Subscription;
-  clusterFunction: Function;
   scrolledToBottom: boolean = true;
   presenceSub: Subscription;
 
@@ -62,13 +67,10 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(switchMap(chatId => this.chatService.getChat(chatId)))
       .subscribe(chat => (this.chat = chat));
 
-    this.clusterFunction = (message: Message) =>
-      message.user.id === this.userId;
-
     this.messagesSub = this.routeObs
       .pipe(switchMap(chatId => this.messageService.getMessages(chatId)))
       .subscribe(messages => {
-        this.messages = cluster(messages, this.clusterFunction);
+        this.messageClusters = createClusters(messages);
       });
 
     this.chatRoomSub = this.routeObs
@@ -80,9 +82,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         map((messageData: string) => JSON.parse(messageData)),
       )
       .subscribe((message: Message) => {
-        this.clusterFunction(message)
-          ? this.addToSent(message)
-          : this.addToReceived(message);
+        addIntoClusters(this.messageClusters, message);
       });
 
     this.chatMessageForm = this.fb.group({
@@ -136,32 +136,22 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
   loadOlderMessages() {
     this.routeObs
       .pipe(
-        switchMap((chatId: number) =>
-          this.messageService.getMessages(chatId, this.messages[0][0].id),
-        ),
+        switchMap((chatId: number) => {
+          return this.messageService.getMessages(
+            chatId,
+            this.messageClusters[0].messages[0].id,
+          );
+        }),
         take(1),
       )
       .subscribe((oldMessages: Message[]) => {
         if (oldMessages.length > 0) {
-          const oldMessagesCluster = cluster(oldMessages, this.clusterFunction);
-          this.messages = clusterCombine(
-            oldMessagesCluster,
-            this.messages,
-            this.clusterFunction,
+          const oldMessageClusters = createClusters(oldMessages);
+          this.messageClusters = combineClusters(
+            oldMessageClusters,
+            this.messageClusters,
           );
         }
       });
-  }
-
-  private addToReceived(message: Message) {
-    addToCluster(this.messages, message, prev => {
-      return prev.user.id === this.userId;
-    });
-  }
-
-  private addToSent(message: Message) {
-    addToCluster(this.messages, message, prev => {
-      return prev.user.id !== this.userId;
-    });
   }
 }
