@@ -1,25 +1,12 @@
-import {
-  Component,
-  OnInit,
-  AfterViewInit,
-  OnDestroy,
-  ViewEncapsulation,
-} from '@angular/core';
-import { ActivatedRoute, ParamMap } from '@angular/router';
-import { FormBuilder, FormGroup, AbstractControl } from '@angular/forms';
+import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { CoreService } from '../core.service';
 import { MessageService } from '../message.service';
 import { ChatService } from '../chat.service';
 import { Chat } from '../chat';
 import { Message } from '../message';
-import {
-  switchMap,
-  shareReplay,
-  map,
-  filter,
-  take,
-  finalize,
-} from 'rxjs/operators';
+import { tap, map, filter, finalize } from 'rxjs/operators';
 import { Subscription, Observable, of } from 'rxjs';
 import { CableService } from '../cable.service';
 import {
@@ -37,7 +24,7 @@ import { PaginatedMessages } from '../paginated-messages';
   styleUrls: ['./chat.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ChatComponent implements OnInit, OnDestroy {
   chat: Chat;
   messageClusters: Cluster[];
   pages = 0;
@@ -45,63 +32,51 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
 
   chatMessageForm: FormGroup;
   userId: number;
-  routeObs: Observable<any>;
   routeSub: Subscription;
   chatRoom: Channel;
   chatRoomSub: Subscription;
-  messagesSub: Subscription;
-  chatSub: Subscription;
   scrolledToBottom: boolean = true;
   presenceSub: Subscription;
 
+  chatId: number;
+
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private fb: FormBuilder,
     private coreService: CoreService,
     private chatService: ChatService,
     private messageService: MessageService,
     private cableService: CableService,
-  ) {}
+  ) {
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+  }
 
   ngOnInit() {
+    this.chatMessageForm = this.fb.group({
+      content: '',
+    });
+
     this.userId = this.coreService.currentUser.id;
+    this.chatId = +this.route.snapshot.paramMap.get('id');
 
-    this.routeObs = this.route.paramMap.pipe(
-      switchMap((params: ParamMap) => {
-        return of(+params.get('id'));
-      }),
-      shareReplay(),
-    );
-
-    this.chatSub = this.routeObs
-      .pipe(switchMap(chatId => this.chatService.getChat(chatId)))
-      .subscribe(chat => (this.chat = chat));
-
-    this.messagesSub = this.routeObs
-      .pipe(switchMap(chatId => this.messageService.getMessages(chatId)))
+    this.messageService
+      .getMessages(this.chatId)
       .subscribe((paginatedMessages: PaginatedMessages) => {
         this.messageClusters = createClusters(paginatedMessages.messages);
         this.pages = paginatedMessages.pages;
       });
 
-    this.chatRoomSub = this.routeObs
-      .pipe(
-        switchMap(chatId => {
-          this.chatRoom = this.cableService.chatRoom(chatId);
-          return this.chatRoom.received();
-        }),
-        map((messageData: string) => JSON.parse(messageData)),
-      )
+    this.chatRoom = this.cableService.chatRoom(this.chatId);
+    this.chatRoomSub = this.chatRoom
+      .received()
+      .pipe(map((messageData: string) => JSON.parse(messageData)))
       .subscribe((message: Message) => {
         addIntoClusters(this.messageClusters, message);
       });
 
-    this.chatMessageForm = this.fb.group({
-      content: '',
-    });
-  }
+    this.chatService.getChat(this.chatId).subscribe(chat => (this.chat = chat));
 
-  ngAfterViewInit() {
     this.presenceSub = this.cableService.presenceChannel
       .received()
       .pipe(
@@ -116,8 +91,6 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.chatSub.unsubscribe();
-    this.messagesSub.unsubscribe();
     this.chatRoom.unsubscribe();
     this.chatRoomSub.unsubscribe();
     this.presenceSub.unsubscribe();
@@ -150,15 +123,11 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.loading = true;
 
-    this.routeObs
+    const messageId = this.messageClusters[0].messages[0].id;
+
+    this.messageService
+      .getMessages(this.chatId, messageId)
       .pipe(
-        switchMap((chatId: number) => {
-          return this.messageService.getMessages(
-            chatId,
-            this.messageClusters[0].messages[0].id,
-          );
-        }),
-        take(1),
         finalize(() => {
           this.loading = false;
           setTimeout(() => {
