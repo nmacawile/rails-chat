@@ -1,4 +1,7 @@
-<mat-card class="message-card" [ngStyle]="{'max-width.px': 248}" #messageCard>
+<mat-card class="message-card"
+          [ngStyle]="{'max-width.px': 248}"
+          [matTooltip]="message.created_at | date: 'medium'"
+          #messageCard>
   <mat-card-content>
     <p style="white-space: pre-wrap;
               word-break: break-word;">{{message.content}}</p>
