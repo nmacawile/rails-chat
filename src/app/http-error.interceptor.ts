@@ -9,13 +9,17 @@ import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { retry, catchError, tap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
-import { CoreService } from './core.service';
+import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { logOut } from './auth.actions';
+import { User } from './user';
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
   constructor(
+    private router: Router,
     private snackBar: MatSnackBar,
-    private coreService: CoreService,
+    private store: Store<{ user: User }>,
   ) {}
 
   intercept(
@@ -26,7 +30,10 @@ export class HttpErrorInterceptor implements HttpInterceptor {
       retry(1),
       tap({
         error: (error: HttpErrorResponse) => {
-          if (error.status === 422) this.coreService.logOut();
+          if (error.status === 422) {
+            this.store.dispatch(logOut());
+            this.router.navigate(['/login']);
+          }
         },
       }),
       catchError((error: HttpErrorResponse) => {
