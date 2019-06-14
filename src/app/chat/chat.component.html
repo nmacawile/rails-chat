@@ -1,4 +1,5 @@
 <div (scroll)="updateScroll($event)"
+     id="scrollable"
      style="position: absolute;
             top: 0;
             left: 0;
@@ -30,6 +31,14 @@
 
   <!-- CHAT_MESSAGES start -->
   <div class="chat-messages">
+    <div *ngIf="pages > 1" style="margin-bottom: 16px;" fxLayout>
+      <button mat-stroked-button
+              style="margin: auto"
+              (click)="loadOlderMessages()"
+              [disabled]="loading">
+        {{loading ? 'PLEASE WAIT...' : 'LOAD OLDER MESSAGES'}}
+      </button>
+    </div>
     <div *ngFor="let cluster of messageClusters; last as isLast"
           class="chat-box-group chat-box-group-{{cluster.userId !== userId ? 'left' : 'right'}}">
       <!-- CHAT_MESSAGE start -->

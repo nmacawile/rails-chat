@@ -12,7 +12,14 @@ import { MessageService } from '../message.service';
 import { ChatService } from '../chat.service';
 import { Chat } from '../chat';
 import { Message } from '../message';
-import { switchMap, shareReplay, map, filter, take } from 'rxjs/operators';
+import {
+  switchMap,
+  shareReplay,
+  map,
+  filter,
+  take,
+  finalize,
+} from 'rxjs/operators';
 import { Subscription, Observable, of } from 'rxjs';
 import { CableService } from '../cable.service';
 import {
@@ -22,6 +29,7 @@ import {
 } from '../cluster-operators';
 import { Channel } from 'angular2-actioncable';
 import { Cluster } from '../cluster';
+import { PaginatedMessages } from '../paginated-messages';
 
 @Component({
   selector: 'app-chat',
@@ -32,6 +40,8 @@ import { Cluster } from '../cluster';
 export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
   chat: Chat;
   messageClusters: Cluster[];
+  pages = 0;
+  loading: boolean = false;
 
   chatMessageForm: FormGroup;
   userId: number;
@@ -69,8 +79,9 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.messagesSub = this.routeObs
       .pipe(switchMap(chatId => this.messageService.getMessages(chatId)))
-      .subscribe(messages => {
-        this.messageClusters = createClusters(messages);
+      .subscribe((paginatedMessages: PaginatedMessages) => {
+        this.messageClusters = createClusters(paginatedMessages.messages);
+        this.pages = paginatedMessages.pages;
       });
 
     this.chatRoomSub = this.routeObs
@@ -114,7 +125,6 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
 
   updateScroll(event: Event) {
     const scrollable: Element = <Element>event.target;
-    if (scrollable.scrollTop === 0) this.loadOlderMessages();
 
     this.scrolledToBottom =
       Math.abs(
@@ -134,6 +144,12 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   loadOlderMessages() {
+    const scrollable: Element = document.getElementById('scrollable');
+    const sH = scrollable.scrollHeight;
+    const sT = scrollable.scrollTop;
+
+    this.loading = true;
+
     this.routeObs
       .pipe(
         switchMap((chatId: number) => {
@@ -143,15 +159,24 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
           );
         }),
         take(1),
+        finalize(() => {
+          this.loading = false;
+          setTimeout(() => {
+            scrollable.scrollTop = scrollable.scrollHeight - sH + sT;
+          }, 0);
+        }),
       )
-      .subscribe((oldMessages: Message[]) => {
-        if (oldMessages.length > 0) {
-          const oldMessageClusters = createClusters(oldMessages);
+      .subscribe((paginatedOldMessages: PaginatedMessages) => {
+        if (paginatedOldMessages.messages.length > 0) {
+          const oldMessageClusters = createClusters(
+            paginatedOldMessages.messages,
+          );
           this.messageClusters = combineClusters(
             oldMessageClusters,
             this.messageClusters,
           );
         }
+        this.pages = paginatedOldMessages.pages;
       });
   }
 }
