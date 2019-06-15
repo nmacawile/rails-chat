@@ -1,7 +1,7 @@
 <mat-tab-group color="accent" mat-stretch-tabs style="height: 100%; box-sizing: border-box;">
   <mat-tab label="CHATS">
     <app-loading-spinner *ngIf="fetchingChats"></app-loading-spinner>
-    <mat-nav-list>
+    <mat-nav-list style="padding-bottom: 8px">
       <a mat-list-item @chats *ngFor="let chat of chats" routerLink="/chat/{{chat.id}}">
         <mat-icon *ngIf="chat.user.present" mat-list-icon color="primary">sms</mat-icon>
         <mat-icon *ngIf="!chat.user.present" mat-list-icon style="color: rgba(0,0,0,.54)">sms_failed</mat-icon>
