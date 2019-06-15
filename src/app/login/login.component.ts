@@ -3,7 +3,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { CoreService } from '../core.service';
 import { tokenSetter } from '../token-store';
 import { finalize } from 'rxjs/operators';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -19,7 +19,6 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     private coreService: CoreService,
     private route: ActivatedRoute,
-    private router: Router,
   ) {}
 
   ngOnInit() {
@@ -34,11 +33,9 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.valid) {
       this.unlocked = false;
       this.coreService
-        .logIn(this.loginForm.value)
+        .logIn(this.loginForm.value, this.returnUrl)
         .pipe(finalize(() => (this.unlocked = true)))
-        .subscribe(data =>
-          this.router.navigate([this.returnUrl])
-        );
+        .subscribe();
     }
   }
 

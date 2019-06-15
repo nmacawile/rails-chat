@@ -36,14 +36,13 @@ export class CoreService {
     return this.http.get(`https://${baseUrl}/auth/validate`);
   }
 
-  logIn(loginInfo: { email: string; password: string }) {
-    return this.http
-      .post(`https://${baseUrl}/auth/login`, loginInfo)
-      .pipe(
-        tap((data: { auth_token: string; user: User }) =>
-          this.store.dispatch(logIn(data)),
-        ),
-      );
+  logIn(loginInfo: { email: string; password: string }, returnUrl: string) {
+    return this.http.post(`https://${baseUrl}/auth/login`, loginInfo).pipe(
+      tap((data: { auth_token: string; user: User }) => {
+        this.store.dispatch(logIn(data));
+        this.router.navigate([returnUrl]);
+      }),
+    );
   }
 
   register(registerInfo: {
@@ -53,13 +52,12 @@ export class CoreService {
     first_name: string;
     last_name: string;
   }) {
-    return this.http
-      .post(`https://${baseUrl}/signup`, registerInfo)
-      .pipe(
-        tap((data: { auth_token: string; user: User }) =>
-          this.store.dispatch(logIn(data)),
-        ),
-      );
+    return this.http.post(`https://${baseUrl}/signup`, registerInfo).pipe(
+      tap((data: { auth_token: string; user: User }) => {
+        this.store.dispatch(logIn(data));
+        this.router.navigate(['/']);
+      }),
+    );
   }
 
   logOut() {

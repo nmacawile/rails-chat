@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { CoreService } from '../core.service';
 import { finalize } from 'rxjs/operators';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -15,8 +14,7 @@ export class RegisterComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private core: CoreService,
-    private router: Router,
+    private coreService: CoreService,
   ) {}
 
   ngOnInit() {
@@ -44,10 +42,10 @@ export class RegisterComponent implements OnInit {
   register() {
     if (this.registerForm.valid) {
       this.unlocked = false;
-      this.core
+      this.coreService
         .register(this.registerForm.value)
         .pipe(finalize(() => (this.unlocked = true)))
-        .subscribe(data => this.router.navigate(['/']));
+        .subscribe();
     }
   }
 
