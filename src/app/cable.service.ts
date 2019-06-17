@@ -10,7 +10,7 @@ import { MatSnackBar } from '@angular/material';
 import { Router } from '@angular/router';
 import { User } from './user';
 
-const CABLE_URL = `ws://${baseUrl}/cable`;
+const CABLE_URL = `wss://${baseUrl}/cable`;
 
 @Injectable({
   providedIn: 'root',
