@@ -13,7 +13,7 @@ export function userSetter(data: User) {
   localStorage.setItem('user', JSON.stringify(data));
 }
 
-export function tokenSetter(data: { auth_token: string, user: User}) {
+export function tokenSetter(data: { auth_token: string; user: User }) {
   localStorage.setItem('auth_token', data['auth_token']);
   userSetter(data['user']);
 }
