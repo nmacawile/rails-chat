@@ -1,0 +1,22 @@
+<div style="padding: 16px">
+  <h1 class="mat-h1">
+    Edit profile
+  </h1>
+
+  <form [formGroup]="editProfileForm" fxLayout="column" fxLayoutGap="16px" (ngSubmit)="update()">
+    <mat-form-field>
+      <input matInput type="text" placeholder="First Name" formControlName="first_name">
+      <mat-error>First name is required.</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="text" placeholder="Last Name" formControlName="last_name">
+      <mat-error>Last name is required.</mat-error>
+    </mat-form-field>
+    <button mat-raised-button type="submit" color="primary" [disabled]="!unlocked">
+      {{unlocked ? 'UPDATE' : 'UPDATING...'}}
+    </button>
+    <button mat-raised-button type="button" (click)="back()">
+      BACK
+    </button>
+  </form>
+</div>

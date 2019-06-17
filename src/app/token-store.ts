@@ -25,7 +25,8 @@ export function tokenRemover() {
 
 export function userUpdater(updatedAttr: any): User {
   const user = userGetter();
-  const updatedUser = { ...user, ...updatedAttr };
+  const updatedUser: User = { ...user, ...updatedAttr };
+  updatedUser.name = `${updatedUser.first_name} ${updatedUser.last_name}`;
   userSetter(updatedUser);
   return updatedUser;
 }

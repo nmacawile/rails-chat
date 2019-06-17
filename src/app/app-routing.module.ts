@@ -4,6 +4,7 @@ import { ChatComponent } from './chat/chat.component';
 import { ChatListComponent } from './chat-list/chat-list.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
+import { EditProfileComponent } from './edit-profile/edit-profile.component';
 import { AuthGuard } from './auth.guard';
 import { AnonymousGuard } from './anonymous.guard';
 
@@ -18,6 +19,12 @@ const routes: Routes = [
     path: 'chat/:id',
     component: ChatComponent,
     data: { type: 'Chat' },
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'edit/profile',
+    component: EditProfileComponent,
+    data: { type: 'EditProfile' },
     canActivate: [AuthGuard],
   },
   {

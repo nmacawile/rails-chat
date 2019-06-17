@@ -23,6 +23,7 @@ import { AttachHeaderInterceptor } from './attach-header.interceptor';
 import { ActionCableService } from 'angular2-actioncable';
 import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.component';
 import { authReducer } from './auth.reducer';
+import { EditProfileComponent } from './edit-profile/edit-profile.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import { authReducer } from './auth.reducer';
     LoginComponent,
     RegisterComponent,
     LoadingSpinnerComponent,
+    EditProfileComponent,
   ],
   imports: [
     BrowserModule,

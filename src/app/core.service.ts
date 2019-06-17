@@ -79,6 +79,17 @@ export class CoreService {
       .pipe(tap(() => this.store.dispatch(update({ visible: status }))));
   }
 
+  update(userAttributes: any) {
+    return this.http
+      .patch(`https://${baseUrl}/edit/profile`, userAttributes)
+      .pipe(
+        tap(() => {
+          this.store.dispatch(update(userAttributes));
+          this.openSnackBar(`Update success.`);
+        }),
+      );
+  }
+
   private openSnackBar(message) {
     this.snackBar.open(message, 'CLOSE', { duration: 5000 });
   }
