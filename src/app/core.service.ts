@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { User } from './user';
 import { Store, select } from '@ngrx/store';
 import { logIn, logOut, update } from './auth.actions';
+import { MatSnackBar } from '@angular/material';
 
 @Injectable({
   providedIn: 'root',
@@ -17,6 +18,7 @@ export class CoreService {
     private http: HttpClient,
     private router: Router,
     private store: Store<{ user: User }>,
+    private snackBar: MatSnackBar,
   ) {
     this.store
       .pipe(select('auth'))
@@ -41,6 +43,7 @@ export class CoreService {
       tap((data: { auth_token: string; user: User }) => {
         this.store.dispatch(logIn(data));
         this.router.navigate([returnUrl]);
+        this.openSnackBar(`Welcome back, ${data.user.first_name}!`);
       }),
     );
   }
@@ -56,6 +59,7 @@ export class CoreService {
       tap((data: { auth_token: string; user: User }) => {
         this.store.dispatch(logIn(data));
         this.router.navigate(['/']);
+        this.openSnackBar(`Welcome, ${data.user.first_name}!`);
       }),
     );
   }
@@ -73,5 +77,9 @@ export class CoreService {
     return this.http
       .patch(`https://${baseUrl}/visibility`, { visible: status })
       .pipe(tap(() => this.store.dispatch(update({ visible: status }))));
+  }
+
+  private openSnackBar(message) {
+    this.snackBar.open(message, 'CLOSE', { duration: 5000 });
   }
 }
