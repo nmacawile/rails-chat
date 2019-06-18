@@ -18,7 +18,7 @@ export class AppComponent {
   visible: boolean;
 
   constructor(
-    private coreService: CoreService,
+    public coreService: CoreService,
     private cableService: CableService,
     private router: Router,
     private store: Store<{ user: User }>,

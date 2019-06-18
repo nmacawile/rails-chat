@@ -22,7 +22,7 @@ import { RegisterComponent } from './register/register.component';
 import { AttachHeaderInterceptor } from './attach-header.interceptor';
 import { ActionCableService } from 'angular2-actioncable';
 import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.component';
-import { authReducer } from './auth.reducer';
+import { reducer } from './auth.reducer';
 import { EditProfileComponent } from './edit-profile/edit-profile.component';
 
 @NgModule({
@@ -50,7 +50,7 @@ import { EditProfileComponent } from './edit-profile/edit-profile.component';
         whitelistedDomains: [baseUrl],
       },
     }),
-    StoreModule.forRoot({ auth: authReducer }),
+    StoreModule.forRoot({ auth: reducer }),
   ],
   providers: [
     {

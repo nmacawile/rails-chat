@@ -1,5 +1,10 @@
-import { createReducer, on } from '@ngrx/store';
-import { userGetter, tokenSetter, tokenRemover, userUpdater } from './token-store';
+import { createReducer, on, Action, State } from '@ngrx/store';
+import {
+  userGetter,
+  tokenSetter,
+  tokenRemover,
+  userUpdater,
+} from './token-store';
 import { User } from './user';
 import { logIn, logOut, update } from './auth.actions';
 
@@ -22,3 +27,7 @@ export const authReducer = createReducer(
     return updatedUser;
   }),
 );
+
+export function reducer(state: State<any> | undefined, action: Action) {
+  return authReducer(state, action);
+}
