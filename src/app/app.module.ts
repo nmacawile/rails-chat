@@ -16,7 +16,7 @@ import { ChatListComponent } from './chat-list/chat-list.component';
 import { LoginComponent } from './login/login.component';
 
 import { tokenGetter } from './token-store';
-import { baseUrl } from '../environments/base-url';
+import { environment } from '../environments/environment';
 import { HttpErrorInterceptor } from './http-error.interceptor';
 import { RegisterComponent } from './register/register.component';
 import { AttachHeaderInterceptor } from './attach-header.interceptor';
@@ -47,7 +47,7 @@ import { EditProfileComponent } from './edit-profile/edit-profile.component';
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
-        whitelistedDomains: [baseUrl],
+        whitelistedDomains: [environment.baseUrl],
       },
     }),
     StoreModule.forRoot({ auth: reducer }),

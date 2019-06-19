@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ActionCableService, Cable, Channel } from 'angular2-actioncable';
-import { baseUrl } from '../environments/base-url';
+import { environment } from '../environments/environment';
 import { tokenGetter, userGetter } from './token-store';
 import { map, filter } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
 import { User } from './user';
 import { Presence } from './presence';
 
-const CABLE_URL = `wss://${baseUrl}/cable`;
+const CABLE_URL = `wss://${environment.baseUrl}/cable`;
 
 @Injectable({
   providedIn: 'root',

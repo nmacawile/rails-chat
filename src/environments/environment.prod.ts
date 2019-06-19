@@ -1,3 +1,6 @@
+import { baseUrlProd } from './base-url';
+
 export const environment = {
-  production: true
+  production: true,
+  baseUrl: baseUrlProd,
 };
