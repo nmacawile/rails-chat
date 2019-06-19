@@ -9,10 +9,12 @@ import {
   distinctUntilChanged,
   switchMap,
   tap,
+  filter,
 } from 'rxjs/operators';
 import { CoreService } from '../core.service';
 import { CableService } from '../cable.service';
 import { chatListAnimation } from '../animations';
+import { Presence } from '../presence';
 
 @Component({
   selector: 'app-chat-list',
@@ -70,11 +72,10 @@ export class ChatListComponent implements OnInit, AfterViewInit, OnDestroy {
       },
     );
 
-    this.presenceSubscription = this.cableService.presenceChannel
-      .received()
-      .subscribe((presence: { id: number; present: boolean }) => {
-        const chat =
-          this.chats && this.chats.find(c => c.user.id == presence.id);
+    this.presenceSubscription = this.cableService.presenceReceived
+      .pipe(filter(() => !!this.chats))
+      .subscribe((presence: Presence) => {
+        const chat = this.chats.find(c => c.user.id == presence.id);
         if (chat) chat.user.present = presence.present;
       });
   }

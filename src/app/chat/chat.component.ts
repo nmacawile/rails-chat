@@ -17,6 +17,7 @@ import {
 import { Channel } from 'angular2-actioncable';
 import { Cluster } from '../cluster';
 import { PaginatedMessages } from '../paginated-messages';
+import { Presence } from '../presence';
 
 @Component({
   selector: 'app-chat',
@@ -63,10 +64,7 @@ export class ChatComponent implements OnInit, OnDestroy {
 
     this.chatService
       .getChat(this.chatId)
-      .subscribe(
-        chat => (this.chat = chat),
-        () => this.router.navigate(['/']),
-      );
+      .subscribe(chat => (this.chat = chat), () => this.router.navigate(['/']));
 
     this.messageService
       .getMessages(this.chatId)
@@ -83,16 +81,14 @@ export class ChatComponent implements OnInit, OnDestroy {
         addIntoClusters(this.messageClusters, message);
       });
 
-    this.presenceSub = this.cableService.presenceChannel
-      .received()
+    this.presenceSub = this.cableService.presenceReceived
       .pipe(
         filter(
-          (presence: { id: number; present: boolean }) =>
-            this.chat && presence.id == this.chat.user.id,
+          (presence: Presence) => this.chat && presence.id == this.chat.user.id,
         ),
       )
-      .subscribe((presence: { id: number; present: boolean }) => {
-        if (this.chat) this.chat.user.present = presence.present;
+      .subscribe((presence: Presence) => {
+        this.chat.user.present = presence.present;
       });
   }
 
