@@ -39,6 +39,10 @@ const routes: Routes = [
     data: { type: 'Register' },
     canActivate: [AnonymousGuard],
   },
+  {
+    path: '**',
+    redirectTo: '/',
+  },
 ];
 
 @NgModule({
