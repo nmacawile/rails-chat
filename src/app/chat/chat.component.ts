@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CoreService } from '../core.service';
 import { MessageService } from '../message.service';
 import { ChatService } from '../chat.service';
@@ -29,6 +29,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   messageClusters: Cluster[];
   pages = 0;
   loading: boolean = false;
+  sendingMessage: boolean = false;
 
   chatMessageForm: FormGroup;
   userId: number;
@@ -54,7 +55,7 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.chatMessageForm = this.fb.group({
-      content: '',
+      content: ['', Validators.maxLength(2000)],
     });
 
     this.userId = this.coreService.currentUser.id;
@@ -109,10 +110,19 @@ export class ChatComponent implements OnInit, OnDestroy {
   sendMessage() {
     const content = this.chatMessageForm.get('content').value;
     const trimmed = content && content.trim();
-    if (trimmed && this.chat) {
+    if (
+      trimmed &&
+      this.chat &&
+      this.chatMessageForm.valid &&
+      !this.sendingMessage
+    ) {
+      this.sendingMessage = true;
       this.messageService
         .sendMessage(this.chat.id, { content: trimmed })
-        .subscribe();
+        .pipe(finalize(() => (this.sendingMessage = false)))
+        .subscribe(() => {
+          this.chatMessageForm.reset();
+        });
     }
   }
 

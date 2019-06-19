@@ -57,26 +57,25 @@
               padding: 32px 16px 16px;
               background: linear-gradient(transparent, #fff 16px);"
        class="chat-message-box">
-    <form #messageForm
-          fxLayout
+    <form fxLayout
           fxLayoutAlign="center center"
           fxLayoutGap="16px"
           [formGroup]="chatMessageForm"
-          (keydown.enter)="sendMessage(); messageForm.reset()"
-          (ngSubmit)="sendMessage(); messageForm.reset()">
+          (keydown.enter)="sendMessage()"
+          (ngSubmit)="sendMessage()">
       <mat-form-field style="width: 100%;">
         <textarea matInput
+              #messageInput
               formControlName="content"
               placeholder="Leave a message" 
               cdkTextareaAutosize
               cdkAutosizeMinRows="3"
               cdkAutosizeMaxRows="3"
               (keydown.enter)="$event.preventDefault();"></textarea>
-        <mat-error>Message is empty.</mat-error>
-        <mat-hint align="start">Don't disclose personal info</mat-hint>
-        <mat-hint align="end">{{200}} / 256</mat-hint>
+        <mat-error>Message is too long.</mat-error>
+        <mat-hint align="end">{{messageInput.value.length}} / 2000</mat-hint>
       </mat-form-field>
-      <button mat-fab>
+      <button mat-fab [disabled]="sendingMessage">
         <mat-icon>send</mat-icon>
       </button>
     </form>
