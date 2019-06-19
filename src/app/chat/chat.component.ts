@@ -61,6 +61,13 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.userId = this.coreService.currentUser.id;
     this.chatId = +this.route.snapshot.paramMap.get('id');
 
+    this.chatService
+      .getChat(this.chatId)
+      .subscribe(
+        chat => (this.chat = chat),
+        () => this.router.navigate(['/']),
+      );
+
     this.messageService
       .getMessages(this.chatId)
       .subscribe((paginatedMessages: PaginatedMessages) => {
@@ -75,8 +82,6 @@ export class ChatComponent implements OnInit, OnDestroy {
       .subscribe((message: Message) => {
         addIntoClusters(this.messageClusters, message);
       });
-
-    this.chatService.getChat(this.chatId).subscribe(chat => (this.chat = chat));
 
     this.presenceSub = this.cableService.presenceChannel
       .received()
