@@ -1,27 +1,44 @@
-# RailsChatApiAngular
+# Rails Chat (frontend)
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.3.5.
+[Link to app](https://nmacawile.github.io/rails-chat)
 
-## Development server
+[API backend repository](https://github.com/nmacawile/rails-chat-api)
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+A chat app developed with Ruby on Rails API backend and Angular frontend. It uses Rails' ActionCable to maintain a persistent connection between the chat server and the end users. Angular and Angular Material were used create an interactive and nice looking user interface.
 
-## Code scaffolding
+## Features
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+### Send and receive messages in real-time
 
-## Build
+![](readme_images/mYmkQQkFRD.gif)
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+### Receive live notifications for new messages
 
-## Running unit tests
+![](readme_images/fetDvQDNpT.gif)
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+### View older messages
 
-## Running end-to-end tests
+![](readme_images/sTFdGuvNIW.gif)
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+### Appear 'offline ' from other users
 
-## Further help
+![](readme_images/riZJ8Lphw0.gif)
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+> Offline users have a gray dialog icon ![](readme_images/chrome_YRPamH57aY.png) next to their name
+>
+> Online users have a purple dialog icon ![](readme_images/chrome_xZK6xZveKo.png) next to their name
+
+### Security
+
+Chat instances are protected in the server.
+
+![](readme_images/D5gvWHTdtB.png)
+
+### Search users
+
+![](readme_images/auraKt9uh1.gif)
+
+
+
+
+
