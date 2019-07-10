@@ -6,7 +6,8 @@ import { domainDev } from './domain';
 export const environment = {
   production: false,
   domain: domainDev,
-  url: `http://${domainDev}`,
+  url: `http://${domainDev}`,  
+  cableUrl: `ws://${domainDev}/cable`,
 };
 
 /*

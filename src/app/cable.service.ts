@@ -10,10 +10,8 @@ import { MatSnackBar } from '@angular/material';
 import { Router } from '@angular/router';
 import { User } from './user';
 import { Presence } from './presence';
-import { isDevMode } from '@angular/core';
 
-const PROTOCOL = isDevMode ? 'ws' : 'wss';
-const CABLE_URL = `${PROTOCOL}://${environment.domain}/cable`;
+const CABLE_URL = environment.cableUrl;
 
 @Injectable({
   providedIn: 'root',
