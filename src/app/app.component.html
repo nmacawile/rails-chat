@@ -1,9 +1,12 @@
 <mat-sidenav-container style="height: 100%">
   <!-- SIDENAV start -->
-  <mat-sidenav #sidenav mode="over"
-               fixedInViewport="true"
+  <mat-sidenav #sidenav
+               [mode]="smallScreen ? 'over' : 'side'"
+               fixedInViewport="false"
                style="width: 296px;"
-               (click)="sidenav.toggle()">
+               [disableClose]="smallScreen ? false : true"
+               [opened]="smallScreen ? false : true"
+               (click)="smallScreen ? sidenav.toggle() : true">
     <mat-toolbar color="primary" 
                  style="display: grid;
                         grid-template-rows: repeat(3, 1fr);
@@ -51,7 +54,8 @@
   <!-- MAIN_TOOLBAR start -->
   <mat-toolbar color="primary">
     <mat-toolbar-row>
-      <button mat-icon-button
+      <button *ngIf="smallScreen"
+              mat-icon-button
               [style.margin-right.px]="8"
               (click)="sidenav.toggle()">
         <mat-icon>menu</mat-icon>
@@ -62,8 +66,9 @@
   <!-- MAIN_TOOLBAR end -->
   <div class="main-content mat-elevation-z3"
        style="overflow: auto;
-              margin: 8px;
-              height: 100%;"
+              margin: 16px;
+              height: 100%;
+              max-width: 800px;"
        [@slideIn]="o && o.activatedRouteData && o.activatedRouteData['type']">
     <router-outlet #o="outlet"></router-outlet>
   </div>

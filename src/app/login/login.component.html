@@ -17,7 +17,7 @@
       No account yet? Sign up
       <a mat-button color="accent" routerLink="/register">HERE</a>.
     </span>
-    <button mat-raised-button color="primary" [disabled]="!unlocked">
+    <button mat-raised-button color="primary" [disabled]="!unlocked" ngStyle.gt-sm="width: 50%">
       {{unlocked ? 'LOG IN' : 'PLEASE WAIT...'}}
     </button>
   </form>

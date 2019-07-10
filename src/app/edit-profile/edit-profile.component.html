@@ -12,11 +12,13 @@
       <input matInput type="text" placeholder="Last Name" formControlName="last_name">
       <mat-error>Last name is required.</mat-error>
     </mat-form-field>
-    <button mat-raised-button type="submit" color="primary" [disabled]="!unlocked">
-      {{unlocked ? 'UPDATE' : 'UPDATING...'}}
-    </button>
-    <button mat-raised-button type="button" (click)="back()">
-      BACK
-    </button>
+    <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap="16px">
+      <button fxFlex="50" mat-raised-button type="submit" color="primary" [disabled]="!unlocked">
+        {{unlocked ? 'UPDATE' : 'UPDATING...'}}
+      </button>
+      <button fxFlex="50" mat-raised-button type="button" (click)="back()">
+        BACK
+      </button>
+    </div>
   </form>
 </div>
