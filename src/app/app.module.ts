@@ -47,7 +47,7 @@ import { EditProfileComponent } from './edit-profile/edit-profile.component';
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
-        whitelistedDomains: [environment.baseUrl],
+        whitelistedDomains: [environment.domain],
       },
     }),
     StoreModule.forRoot({ auth: reducer }),

@@ -8,7 +8,7 @@ import { Store, select } from '@ngrx/store';
 import { logIn, logOut, update } from './auth.actions';
 import { MatSnackBar } from '@angular/material';
 
-const BASE_PATH = `https://${environment.baseUrl}`;
+const URL = environment.url;
 
 @Injectable({
   providedIn: 'root',
@@ -37,11 +37,11 @@ export class CoreService {
   }
 
   validateToken() {
-    return this.http.get(`${BASE_PATH}/auth/validate`);
+    return this.http.get(`${URL}/auth/validate`);
   }
 
   logIn(loginInfo: { email: string; password: string }, returnUrl: string) {
-    return this.http.post(`${BASE_PATH}/auth/login`, loginInfo).pipe(
+    return this.http.post(`${URL}/auth/login`, loginInfo).pipe(
       tap((data: { auth_token: string; user: User }) => {
         this.store.dispatch(logIn(data));
         this.router.navigate([returnUrl]);
@@ -57,7 +57,7 @@ export class CoreService {
     first_name: string;
     last_name: string;
   }) {
-    return this.http.post(`${BASE_PATH}/signup`, registerInfo).pipe(
+    return this.http.post(`${URL}/signup`, registerInfo).pipe(
       tap((data: { auth_token: string; user: User }) => {
         this.store.dispatch(logIn(data));
         this.router.navigate(['/']);
@@ -77,13 +77,13 @@ export class CoreService {
 
   updateVisibility(status: boolean) {
     return this.http
-      .patch(`${BASE_PATH}/visibility`, { visible: status })
+      .patch(`${URL}/visibility`, { visible: status })
       .pipe(tap(() => this.store.dispatch(update({ visible: status }))));
   }
 
   update(userAttributes: any) {
     return this.http
-      .patch(`${BASE_PATH}/edit/profile`, userAttributes)
+      .patch(`${URL}/edit/profile`, userAttributes)
       .pipe(
         tap(() => {
           this.store.dispatch(update(userAttributes));

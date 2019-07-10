@@ -5,7 +5,7 @@ import { map } from 'rxjs/operators';
 import { PaginatedMessages } from './paginated-messages';
 import { environment } from '../environments/environment';
 
-const BASE_PATH = `https://${environment.baseUrl}`;
+const URL = environment.url;
 
 @Injectable({
   providedIn: 'root',
@@ -20,7 +20,7 @@ export class MessageService {
     const params = {};
     if (before) params['before'] = before;
     return this.http
-      .get<PaginatedMessages>(`${BASE_PATH}/chats/${chatId}/messages`, {
+      .get<PaginatedMessages>(`${URL}/chats/${chatId}/messages`, {
         params: params,
       })
       .pipe(
@@ -33,6 +33,6 @@ export class MessageService {
   }
 
   sendMessage(chatId: number, message: { content: string }) {
-    return this.http.post(`${BASE_PATH}/chats/${chatId}/messages`, message);
+    return this.http.post(`${URL}/chats/${chatId}/messages`, message);
   }
 }
