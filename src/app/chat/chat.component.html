@@ -1,6 +1,4 @@
-<div (scroll)="updateScroll($event)"
-     id="scrollable"
-     style="position: absolute;
+<div style="position: absolute;
             top: 0;
             left: 0;
             bottom: 0;
@@ -31,7 +29,7 @@
   <!-- CHAT_TITLEBAR end -->
 
   <!-- CHAT_MESSAGES start -->
-  <div class="chat-messages">
+  <div class="chat-messages" id="chat-messages" style="overflow: auto;" (scroll)="updateScroll($event)">
     <div *ngIf="pages > 1" style="margin-bottom: 16px;" fxLayout>
       <button mat-stroked-button
               style="margin: auto"
@@ -55,8 +53,7 @@
               z-index: 5;
               box-sizing: border-box;
               width: 100%;
-              padding: 32px 16px 16px;
-              background: linear-gradient(transparent, #fff 16px);
+              padding: 16px;
               margin-top: auto;"
        class="chat-message-box">
     <form fxLayout

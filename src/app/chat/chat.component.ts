@@ -128,7 +128,8 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   loadOlderMessages() {
-    const scrollable: Element = document.getElementById('scrollable');
+    const scrollable: Element = document.getElementById('chat-messages');
+
     const sH = scrollable.scrollHeight;
     const sT = scrollable.scrollTop;
 
