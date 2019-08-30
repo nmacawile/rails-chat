@@ -15,8 +15,12 @@
       </button>
 
       <span>{{chat?.user.name}}</span>
-      <mat-icon *ngIf="chat && chat.user.present" mat-list-icon color="primary" style="margin-left: auto;">sms</mat-icon>
-      <mat-icon *ngIf="!(chat && chat.user.present)" mat-list-icon style="color: rgba(0,0,0,.54); margin-left: auto;">sms_failed</mat-icon>
+      <mat-icon *ngIf="chat && chat.user.present" mat-list-icon color="primary" style="margin-left: auto;">
+        sms
+      </mat-icon>
+      <mat-icon *ngIf="!(chat && chat.user.present)" mat-list-icon style="color: rgba(0,0,0,.54); margin-left: auto;">
+        sms
+      </mat-icon>
     </mat-toolbar-row>
     <!-- TEST_PANEL start -->
     <!-- <mat-toolbar-row>

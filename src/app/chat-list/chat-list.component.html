@@ -4,7 +4,7 @@
     <mat-nav-list style="padding-bottom: 8px">
       <a mat-list-item @chats *ngFor="let chat of chats" routerLink="/chat/{{chat.id}}">
         <mat-icon *ngIf="chat.user.present" mat-list-icon color="primary">sms</mat-icon>
-        <mat-icon *ngIf="!chat.user.present" mat-list-icon style="color: rgba(0,0,0,.54)">sms_failed</mat-icon>
+        <mat-icon *ngIf="!chat.user.present" mat-list-icon style="color: rgba(0,0,0,.54)">sms</mat-icon>
          <h4 matLine class="mat-h4">{{chat.user.name}}</h4>
          <p matLine [style.color]="'rgba(0,0,0,.54)'">
            <span class="mat-body-2" [style.paddingRight.px]="4">
