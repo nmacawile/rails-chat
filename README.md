@@ -38,7 +38,40 @@ Chat instances are protected in the server.
 
 ![](readme_images/auraKt9uh1.gif)
 
+## Running locally
 
+Create a file called `environment.ts` inside the `environments` directory with this code:
 
+```ts
+// environments/environment.ts
 
+const domain = 'localhost:3000';
 
+export const environment = {
+  production: false,
+  domain,
+  url: `http://${domain}`,  
+  cableUrl: `ws://${domain}/cable`,
+};
+
+```
+
+Replace the `domain` value with the domain of the server.
+
+For the production build, create `environment.prod.ts` in the same directory with the code:
+
+```ts
+// environments/environment.prod.ts
+
+const domain = 'localhost:3000';
+
+export const environment = {
+  production: true,
+  domain,
+  url: `https://${domain}`,  
+  cableUrl: `ws://${domain}/cable`,
+};
+
+```
+
+Replace the `domain` value with the domain of the server.
