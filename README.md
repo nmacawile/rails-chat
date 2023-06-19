@@ -40,7 +40,7 @@ Chat instances are protected in the server.
 
 ## Running locally
 
-Create a file called `environment.ts` inside the `environments` directory with this code:
+Create a file called `environment.ts` inside the `src/environments` directory with this code:
 
 ```ts
 // environments/environment.ts
@@ -58,12 +58,12 @@ export const environment = {
 
 Replace the `domain` value with the domain of the server.
 
-For the production build, create `environment.prod.ts` in the same directory with the code:
+For the production build, create `environment.prod.ts` in the `src/environments` directory with this code:
 
 ```ts
 // environments/environment.prod.ts
 
-const domain = 'localhost:3000';
+const domain = 'rails-chat-api.aaaa.bbb';
 
 export const environment = {
   production: true,
